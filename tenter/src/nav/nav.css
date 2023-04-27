@@ -15,12 +15,18 @@
     padding-right: 10px;
 }
 
-.avatar {
-    position: relative;
+.avatars {
+    padding: 10px;
     float: right;
+    align-items: center;
+}
+
+.avatar {
+    float: right;
+    padding: 10px;
 }
 
 a {
     text-decoration: none !important;
-    color: rgb(79, 0, 103);
+    color: rgb(231, 231, 231);
 }
