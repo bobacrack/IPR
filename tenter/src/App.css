@@ -14,7 +14,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background: linear-gradient(#eb9df1, #fcfcfc);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -28,10 +28,20 @@
   color: #61dafb;
 }
 
+.navbar {
+  position: fixed;
+  top: 0;
+}
+
+#home {
+  text-align: left;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

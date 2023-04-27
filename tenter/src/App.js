@@ -1,14 +1,16 @@
 /* istanbul ignore file*/
 
-import logo from './logo.svg';
 import './App.css';
+import { DatePicker, message } from 'antd';
+import 'antd/dist/reset.css';
 import RootRoutes from './router/root';
+import Navbar from './nav/nav';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <Navbar />
         <RootRoutes />
       </header>
     </div>

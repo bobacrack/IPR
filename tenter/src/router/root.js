@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from '../home/home';
 
-function Home() {
+
+function Homes() {
     return <p>Home</p>
 }
 
