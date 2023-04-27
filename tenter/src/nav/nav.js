@@ -6,7 +6,8 @@ export default function Navbar() {
     return (
         <div className="navbar">
             <div className='links'>
-                <a id='home' href='/'>Home</a>
+                <a id='home' className='link' href='/'>Home</a>
+                <a id='about' className='link' href='/about'>About</a>
             </div>
             <div className='avatar'>
                 <Avatar size={64} icon={<UserOutlined />} />

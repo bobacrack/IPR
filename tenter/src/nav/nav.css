@@ -1,8 +1,26 @@
 .navbar {
     position: fixed;
     top: 0;
+    width: 100%;
 }
 
-#home {
-    text-align: left;
+.links {
+    position: relative;
+    float: left;
+    left: 0;
+}
+
+.link {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.avatar {
+    position: relative;
+    float: right;
+}
+
+a {
+    text-decoration: none !important;
+    color: rgb(79, 0, 103);
 }
