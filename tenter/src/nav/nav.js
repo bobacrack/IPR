@@ -1,9 +1,11 @@
 import { UserOutlined, MailOutlined } from '@ant-design/icons';
-import { ClockCircleOutlined } from '@ant-design/icons';
-import { Avatar, Badge, Space } from 'antd';
+import { Avatar, Badge } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import './nav.css'
 
-export default function Navbar() {
+const Navbar = () => {
+    const navigate = useNavigate();
+
     return (
         <div className="navbar">
             <div className='links'>
@@ -13,7 +15,7 @@ export default function Navbar() {
             <div className='avatars'>
                 <div className='avatar'>
                     <Badge>
-                        <Avatar size={45} icon={<UserOutlined />} />
+                        <Avatar onClick={() => navigate('/about')} size={45} icon={<UserOutlined />} />
                     </Badge>
                 </div>
                 <div className='avatar'>
@@ -25,3 +27,5 @@ export default function Navbar() {
         </div>
     )
 }
+
+export default Navbar;
