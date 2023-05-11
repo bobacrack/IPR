@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import logo from './IMG_0180.jpg'
-import { SearchOutlined, CloseOutlined } from '@ant-design/icons';
+import { StarOutlined, CloseOutlined, HeartOutlined, UndoOutlined, RiseOutlined } from '@ant-design/icons';
 import { Button, Tooltip, Space } from 'antd';
 
 const TinderCard = () => {
@@ -46,19 +46,19 @@ const TinderCard = () => {
                 <Space direction="vertical">
                     <Space wrap>
                         <Tooltip title="search">
-                            <Button type="primary" style={{ height: 50, width: 50 }} shape="circle" icon={<SearchOutlined />} />
+                            <Button type="primary" style={{ height: 50, width: 50 }} shape="circle" icon={<UndoOutlined />} />
                         </Tooltip>
                         <Tooltip title="search">
                             <Button type="info" style={{ height: 50, width: 50 }} shape="circle" icon={<CloseOutlined />} />
                         </Tooltip>
                         <Tooltip title="search">
-                            <Button type="primary" style={{ height: 50, width: 50 }} shape="circle" icon={<SearchOutlined />} />
+                            <Button type="primary" style={{ height: 50, width: 50 }} shape="circle" icon={<StarOutlined />} />
                         </Tooltip>
                         <Tooltip title="search">
-                            <Button type="primary" style={{ height: 50, width: 50 }} shape="circle" icon={<SearchOutlined />} />
+                            <Button type="primary" style={{ height: 50, width: 50 }} shape="circle" icon={< HeartOutlined />} />
                         </Tooltip>
                         <Tooltip title="search">
-                            <Button type="primary" style={{ height: 50, width: 50 }} shape="circle" icon={<SearchOutlined />} />
+                            <Button type="primary" style={{ height: 50, width: 50 }} shape="circle" icon={<RiseOutlined />} />
                         </Tooltip>
                     </Space>
                 </Space>
