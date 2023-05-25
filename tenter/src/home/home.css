@@ -39,3 +39,8 @@
     background-color: #ff647d;
     /* Farbe beim Hovern über den Button */
 }
+
+.immage {
+    min-width: 200px;
+    max-height: auto;
+}

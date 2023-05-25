@@ -20,7 +20,7 @@ const Navbar = () => {
                 </div>
                 <div className='avatar'>
                     <Badge count={5}>
-                        <Avatar size={45} icon={<MailOutlined />} />
+                        <Avatar onClick={() => navigate('/inbox')} size={45} icon={<MailOutlined />} />
                     </Badge>
                 </div>
             </div>

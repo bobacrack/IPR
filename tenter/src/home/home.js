@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import logo from './IMG_0180.jpg'
+import re from './logo.svg'
 import { StarOutlined, CloseOutlined, HeartOutlined, UndoOutlined, RiseOutlined } from '@ant-design/icons';
 import { Button, Tooltip, Space } from 'antd';
 
@@ -38,10 +39,12 @@ const TinderCard = () => {
             <div className="image-container">
                 {images.length > 0 && (
                     //<img src={images[currentImageIndex]} alt="Tinder Card" />
-                    <img src={logo} alt="Tinder Card" />
+                    <img src={logo} alt="Tinder Card" style={{ width: '200px', height: 'auto' }} />
                 )}
 
             </div>
+            <img className="immage" src={re} alt="Tinder Card" />
+
             <div className="button-container">
                 <Space direction="vertical">
                     <Space wrap>
@@ -49,7 +52,7 @@ const TinderCard = () => {
                             <Button type="primary" style={{ height: 50, width: 50 }} shape="circle" icon={<UndoOutlined />} />
                         </Tooltip>
                         <Tooltip title="search">
-                            <Button type="info" style={{ height: 50, width: 50 }} shape="circle" icon={<CloseOutlined />} />
+                            <Button type="primary" style={{ height: 50, width: 50 }} shape="circle" icon={<CloseOutlined />} />
                         </Tooltip>
                         <Tooltip title="search">
                             <Button type="primary" style={{ height: 50, width: 50 }} shape="circle" icon={<StarOutlined />} />

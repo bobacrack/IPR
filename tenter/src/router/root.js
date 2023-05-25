@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from '../home/home';
 import Navbar from '../nav/nav';
+import Inbox from '../inbox/inbox';
 import RegistrationPage from '../login/login';
 
 
@@ -15,11 +16,12 @@ function About() {
 export default function RootRoutes() {
     return (
         <BrowserRouter>
-            <Navbar />
-            <Routes>
+            <Navbar className="navbar" />
+            <Routes className="routes">
                 <Route path="*" element={<Home />} />
                 <Route path="/about" element={<About />} />
                 <Route path='/login' element={<RegistrationPage />} />
+                <Route path='/inbox' element={<Inbox />} />
             </Routes >
         </BrowserRouter >
     )
