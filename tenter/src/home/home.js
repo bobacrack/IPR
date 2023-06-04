@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import logo from './IMG_0180.jpg'
 import { StarOutlined, CloseOutlined, HeartOutlined, UndoOutlined, RiseOutlined } from '@ant-design/icons';
 import { Button, Tooltip, Space } from 'antd';
+
+const axios = require('axios')
 
 const TinderCard = () => {
     const [images, setImages] = useState([]);
