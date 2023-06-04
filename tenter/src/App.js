@@ -9,9 +9,7 @@ import Navbar from './nav/nav';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <RootRoutes />
-      </header>
+      <RootRoutes />
     </div>
   );
 }
