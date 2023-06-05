@@ -1,15 +1,32 @@
 /* istanbul ignore file*/
 
 import './App.css';
-import { DatePicker, message } from 'antd';
 import 'antd/dist/reset.css';
-import RootRoutes from './router/root';
-import Navbar from './nav/nav';
+import Header from './header/Header';
+import Card from './card/Card'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
   return (
     <div className="App">
-      <RootRoutes />
+
+      <Router>
+        {/*Header */}
+        <Header />
+        <Routes>
+          <Route path='/'>
+            <Card />
+          </Route>
+        </Routes>
+        { /*Tinder Card */}
+
+        { /*Buttons*/}
+
+        { /*chat screen*/}
+
+        { /*indiv chat*/}
+      </Router>
+
     </div>
   );
 }
