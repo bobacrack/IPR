@@ -1,7 +1,6 @@
 /* istanbul ignore file*/
 
 import './App.css';
-import 'antd/dist/reset.css';
 import Header from './header/Header';
 import Card from './card/Card'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -14,9 +13,7 @@ function App() {
         {/*Header */}
         <Header />
         <Routes>
-          <Route path='/'>
-            <Card />
-          </Route>
+          <Route path='/' element={<Card />} />
         </Routes>
         { /*Tinder Card */}
 
@@ -27,7 +24,7 @@ function App() {
         { /*indiv chat*/}
       </Router>
 
-    </div>
+    </div >
   );
 }
 
