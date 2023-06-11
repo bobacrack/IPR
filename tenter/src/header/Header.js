@@ -4,13 +4,14 @@ import ForumIcon from '@mui/icons-material/Forum';
 import IconButton from '@mui/material/IconButton';
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import "./Header.css";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Header({backButton}) {
+    const nav = useNavigate();
     return (
         <div className="header">
             {backButton ? (
-                <IconButton>
+                <IconButton onClick={() => nav(backButton)}>
                     <ArrowBackIosIcon fontSize="large" className="header__icon" />
                 </IconButton>
             ) : (
@@ -24,7 +25,7 @@ function Header({backButton}) {
                 <img className='logo' src='' alt='logo' />
             </Link>
 
-            <Link to="/chat">
+            <Link to="/chats">
             <IconButton>
                 <ForumIcon className='icon' fontSize='large' />
             </IconButton>

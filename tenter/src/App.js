@@ -2,34 +2,54 @@
 
 import './App.css';
 import Header from './header/Header';
-import Card from './card/Card'
+import Card from './card/Card';
+import Chats from './Chats';
 import SwipeButtons from './SwipeButtons';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
   return (
-    <div className="App">
-
+    /*
+     <div className="App">
       <Router>
-        {/*Header */}
+        <Switch>
+          <Route path="/chat">
+            <Header backButton="/" />
+            <Chats />
+          </Route>
+          <Route path="/">
+            <Header />
+            <Cards />
+            <SwipeButtons />
+          </Route>
+        </Switch>
+      </Router>
+    </div>
+
+    
+
+
+    <div className="App">
+      <Router>
         <Header />
-        
         <Routes>
           <Route path='/chats'>
           
           </Route>
           <Route path="/" element={<div><Card /><SwipeButtons /></div>} />
         </Routes>
-        { /*Tinder Card */}
-
-        { /*Buttons*/}
-
-        { /*chat screen*/}
-
-        { /*indiv chat*/}
       </Router>
 
     </div >
+  */
+  <div className="App">
+    <Router>
+      <Routes>
+        <Route path="/chats" element={<div><Header backButton="/" /><Chats /></div>} />
+        <Route path="/" element={<div><Header/><Card /><SwipeButtons /></div>} />
+      </Routes>
+    </Router>
+  </div>
   );
 }
 
