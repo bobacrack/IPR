@@ -24,6 +24,11 @@ function Header({ backButton }) {
         });
     }
 
+    const handleProfileClick = () => {
+        const uid = auth.currentUser.uid
+        navigate(`/profile/${uid}`);
+    };
+
     return (
         <div className="header">
             {backButton ? (
@@ -31,7 +36,7 @@ function Header({ backButton }) {
                     <ArrowBackIosIcon fontSize="large" className="header__icon" />
                 </IconButton>
             ) : (
-                <IconButton>
+                <IconButton onClick={handleProfileClick}>
                     <PersonIcon className='icon' fontSize='large' />
                 </IconButton>
             )}

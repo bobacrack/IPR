@@ -11,6 +11,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LogIn from './login/Login';
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from './firebase';
+import Profile from './profile/Profile';
 
 function App() {
 
@@ -42,7 +43,7 @@ function App() {
           <Route path="/" element={<div><Header /><Card /><SwipeButtons /></div>} />
           <Route path='/register' element={<div><Header /> <RegistrationPage /></div>} />
           <Route path='/login' element={<div><Header /> <LogIn /></div>} />
-
+          <Route path='/profile/:uid' element={<div><Header /> <Profile /></div>} />
         </Routes>
       </Router>
     </div >
