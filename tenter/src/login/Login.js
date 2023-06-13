@@ -1,9 +1,12 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { auth } from "../firebase";
+import { NavLink, useNavigate } from 'react-router-dom'
+import './Login.css'
 
 
 const LogIn = () => {
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -11,16 +14,22 @@ const LogIn = () => {
         e.preventDefault();
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                console.log(userCredential);
+                // Signed in
+                const user = userCredential.user;
+                navigate("/")
+                console.log(user);
             })
             .catch((error) => {
-                console.log(error);
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage)
             });
+
     };
 
     return (
         <div className="sign-in-container">
-            <form onSubmit={signIn}>
+            <form className="form" onSubmit={signIn}>
                 <h1>Log In to your Account</h1>
                 <input
                     type="email"

@@ -3,7 +3,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Modal, Upload, Form, Input, DatePicker } from 'antd';
 import "./RegistrationPage.css";
 import { database } from '../firebase';
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 
@@ -32,17 +32,22 @@ function fileToBase64(file) {
     });
 }
 
-async function addDocumentToCollection(documentData, document) {
+async function addDocumentToCollection(documentData, collectionName, customId) {
     try {
-        const collectionRef = collection(database, document);
-        const docRef = await addDoc(collectionRef, documentData);
-        console.log('Document added with ID:', docRef.id);
-        return docRef.id
+        const collectionRef = collection(database, collectionName);
+        if (customId) {
+            await setDoc(doc(collectionRef, customId), documentData);
+            console.log('Document added with custom ID:', customId);
+            return customId;
+        } else {
+            const docRef = await addDoc(collectionRef, documentData);
+            console.log('Document added with auto-generated ID:', docRef.id);
+            return docRef.id;
+        }
     } catch (error) {
         console.error('Error adding document:', error);
-        return ""
+        return '';
     }
-    return "";
 }
 
 export default function RegistrationPage() {
@@ -177,7 +182,7 @@ export default function RegistrationPage() {
                         console.error('Error converting file to string:', error);
                     });
 
-                var doc = await addDocumentToCollection(picture, "tents");
+                var doc = await addDocumentToCollection(picture, "tents", userCredential.user.uid);
 
                 const data = {
                     firstname: firstname,
@@ -190,7 +195,7 @@ export default function RegistrationPage() {
                 };
 
                 // Call the function to add the document to the collection
-                addDocumentToCollection(data, "user");
+                addDocumentToCollection(data, "user", userCredential.user.uid);
             })
             .catch((error) => {
                 console.log(error);
