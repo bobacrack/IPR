@@ -43,7 +43,7 @@ function App() {
           <Route path="/" element={<div><Card /><SwipeButtons /></div>} />
         </Routes>
       </Router>
-
+<Route path="/" element={<div><Header /><Card /><SwipeButtons /></div>} />
     </div >
   */
     <div className="App">
@@ -51,9 +51,9 @@ function App() {
         <Routes>
           <Route path="/chats/:tents" element={<div><Header backButton="/chats" /><ChatScreen /></div>} />
           <Route path="/chats" element={<div><Header backButton="/" /><Chats /></div>} />
-          <Route path="/" element={<div><Header /><Card /><SwipeButtons /></div>} />
+          <Route path="/" element={<div><Header /><Card /></div>} />
           <Route path='/login' element={<div><Header /> <RegistrationPage /></div>} />
-          <Route path='/signIn' element={<div><Header /> <SignUp /><SignIn/></div>} />
+          <Route path='/signIn' element={<div><Header /> <SignUp /><SignIn /></div>} />
 
         </Routes>
       </Router>
