@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import { PlusOutlined } from '@ant-design/icons';
 import { Modal, Upload, Form, Input, DatePicker } from 'antd';
 import "./RegistrationPage.css";
-import {database} from '../firebase';
-import { collection, addDoc } from "firebase/firestore";
+import { database } from '../firebase';
+import { collection, addDoc, setDoc, doc } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
+import { useNavigate } from 'react-router-dom';
+
 
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -13,37 +17,27 @@ const getBase64 = (file) =>
         reader.onerror = (error) => reject(error);
     });
 
-function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-
-        reader.onload = () => {
-            const base64Data = reader.result.split(',')[1];
-            resolve(base64Data);
-        };
-
-        reader.onerror = (error) => {
-            reject(error);
-        };
-
-        reader.readAsDataURL(file);
-    });
-}
-
-async function addDocumentToCollection(documentData, document) {
+async function addDocumentToCollection(documentData, collectionName, customId) {
     try {
-        const collectionRef = collection(database, document);
-        const docRef = await addDoc(collectionRef, documentData);
-        console.log('Document added with ID:', docRef.id);
-        return docRef.id
+        const collectionRef = collection(database, collectionName);
+        if (customId) {
+            await setDoc(doc(collectionRef, customId), documentData);
+            console.log('Document added with custom ID:', customId);
+            return customId;
+        } else {
+            const docRef = await addDoc(collectionRef, documentData);
+            console.log('Document added with auto-generated ID:', docRef.id);
+            return docRef.id;
+        }
     } catch (error) {
         console.error('Error adding document:', error);
-        return ""
+        return '';
     }
-    return "";
 }
 
 export default function RegistrationPage() {
+    const navigate = useNavigate();
+
     const [form] = Form.useForm();
 
     const [firstname, setFirstname] = useState('');
@@ -78,6 +72,7 @@ export default function RegistrationPage() {
     const [previewTitle, setPreviewTitle] = useState('');
     const [fileList, setFileList] = useState([]);
 
+
     const handleCancel = () => setPreviewOpen(false);
     const handlePreview = async (file) => {
         if (!file.url && !file.preview) {
@@ -95,6 +90,7 @@ export default function RegistrationPage() {
 
     const handleUpload = (options) => {
         const { file, onSuccess, onError } = options;
+
 
         // Simulate file upload process
         setTimeout(() => {
@@ -119,7 +115,7 @@ export default function RegistrationPage() {
         let fileList = [...info.fileList];
 
         // Limit the number of uploaded files
-        fileList = fileList.slice(-1);
+        fileList = fileList.slice(0, 1);
 
         // Update the file list state
         setFileList(fileList);
@@ -151,20 +147,65 @@ export default function RegistrationPage() {
         return age;
     }
 
-    function save() {
-        const picture = { url: fileToBase64(fileList[0]) }
-        const doc = addDocumentToCollection(picture, "tents");
-        const data = {
-            firstname: firstname,
-            lastname: lastname,
-            email: email,
-            age: calculateAge(age),
-            password: password,
-            picture: doc,
-        };
 
-        // Call the function to add the document to the collection
-        addDocumentToCollection(data, "user");
+    async function signUp(e) {
+        e.preventDefault();
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(async (userCredential) => {
+                console.log(userCredential);
+                var picture = {
+                    url: "",
+                    name: firstname + " " + lastname,
+                    uuid: userCredential.user.uid
+                }
+
+                await fileToString(fileList[0].originFileObj)
+                    .then((fileContent) => {
+                        console.log('File content:', fileContent);
+                        picture.url = fileContent;
+                        // Perform further processing with the file content
+                    })
+                    .catch((error) => {
+                        console.error('Error converting file to string:', error);
+                    });
+
+                var doc = await addDocumentToCollection(picture, "tents", userCredential.user.uid);
+
+                const data = {
+                    firstname: firstname,
+                    lastname: lastname,
+                    email: email,
+                    age: calculateAge(age),
+                    password: password,
+                    picture: 'tents/' + doc,
+                    uuid: userCredential.user.uid
+                };
+
+                // Call the function to add the document to the collection
+                addDocumentToCollection(data, "user", userCredential.user.uid);
+
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        navigate('/')
+    };
+
+    function fileToString(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                const fileContent = reader.result; // Extract the base64 string
+                resolve(fileContent);
+            };
+
+            reader.onerror = (error) => {
+                reject(error);
+            };
+
+            reader.readAsDataURL(file);
+        });
     }
 
     return (
@@ -247,7 +288,7 @@ export default function RegistrationPage() {
                 </Modal>
 
                 <Form.Item>
-                    <button onClick={save} type="submit">Register</button>
+                    <button onClick={signUp} type="submit">Register</button>
                 </Form.Item>
             </Form>
         </div>

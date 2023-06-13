@@ -42,6 +42,7 @@ export default function Card() {
         };
 
         fetchData();
+
     }, []);
 
 
