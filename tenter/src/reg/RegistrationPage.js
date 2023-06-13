@@ -6,6 +6,8 @@ import { database } from '../firebase';
 import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
+import { useNavigate } from 'react-router-dom';
+
 
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -14,23 +16,6 @@ const getBase64 = (file) =>
         reader.onload = () => resolve(reader.result);
         reader.onerror = (error) => reject(error);
     });
-
-function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-
-        reader.onload = () => {
-            const base64Data = reader.result.split(',')[1];
-            resolve(base64Data);
-        };
-
-        reader.onerror = (error) => {
-            reject(error);
-        };
-
-        reader.readAsDataURL(file);
-    });
-}
 
 async function addDocumentToCollection(documentData, collectionName, customId) {
     try {
@@ -51,6 +36,8 @@ async function addDocumentToCollection(documentData, collectionName, customId) {
 }
 
 export default function RegistrationPage() {
+    const navigate = useNavigate();
+
     const [form] = Form.useForm();
 
     const [firstname, setFirstname] = useState('');
@@ -196,16 +183,13 @@ export default function RegistrationPage() {
 
                 // Call the function to add the document to the collection
                 addDocumentToCollection(data, "user", userCredential.user.uid);
+
             })
             .catch((error) => {
                 console.log(error);
             });
+        navigate('/')
     };
-
-    function anyToBlob(value) {
-        const blob = new Blob([value], { type: 'application/octet-stream' });
-        return blob;
-    }
 
     function fileToString(file) {
         return new Promise((resolve, reject) => {
