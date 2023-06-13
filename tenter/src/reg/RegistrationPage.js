@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { PlusOutlined } from '@ant-design/icons';
 import { Modal, Upload, Form, Input, DatePicker } from 'antd';
 import "./RegistrationPage.css";
-import database from '../firebase';
+import {database} from '../firebase';
 import { collection, addDoc } from "firebase/firestore";
 
 const getBase64 = (file) =>

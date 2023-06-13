@@ -8,6 +8,8 @@ import ChatScreen from './ChatScreen';
 import SwipeButtons from './SwipeButtons';
 import RegistrationPage from './reg/RegistrationPage';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import SignIn from './login/SignIn';
+import SignUp from './login/SignUp';
 
 function App() {
   return (
@@ -51,6 +53,7 @@ function App() {
           <Route path="/chats" element={<div><Header backButton="/" /><Chats /></div>} />
           <Route path="/" element={<div><Header /><Card /><SwipeButtons /></div>} />
           <Route path='/login' element={<div><Header /> <RegistrationPage /></div>} />
+          <Route path='/signIn' element={<div><Header /> <SignUp /><SignIn/></div>} />
 
         </Routes>
       </Router>
