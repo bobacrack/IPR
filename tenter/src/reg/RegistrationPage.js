@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { PlusOutlined } from '@ant-design/icons';
 import { Modal, Upload, Form, Input, DatePicker } from 'antd';
 import "./RegistrationPage.css";
-import {database} from '../firebase';
+import { database } from '../firebase';
 import { collection, addDoc } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -153,38 +155,81 @@ export default function RegistrationPage() {
         return age;
     }
 
-    async function save() {
 
-        var picture = {
-            url: "",
-            name: 'sdsd'
-        }
+    async function signUp(e) {
+        e.preventDefault();
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(async (userCredential) => {
+                console.log(userCredential);
+                var picture = {
+                    url: "",
+                    name: firstname + " " + lastname,
+                    uuid: userCredential.user.uid
+                }
 
-        await fileToString(fileList[0])
-            .then((fileContent) => {
-                console.log('File content:', fileContent);
-                picture.url = fileContent;
-                // Perform further processing with the file content
+                await fileToString(fileList[0].originFileObj)
+                    .then((fileContent) => {
+                        console.log('File content:', fileContent);
+                        picture.url = fileContent;
+                        // Perform further processing with the file content
+                    })
+                    .catch((error) => {
+                        console.error('Error converting file to string:', error);
+                    });
+
+                var doc = await addDocumentToCollection(picture, "tents");
+
+                const data = {
+                    firstname: firstname,
+                    lastname: lastname,
+                    email: email,
+                    age: calculateAge(age),
+                    password: password,
+                    picture: 'tents/' + doc,
+                    uuid: userCredential.user.uid
+                };
+
+                // Call the function to add the document to the collection
+                addDocumentToCollection(data, "user");
             })
             .catch((error) => {
-                console.error('Error converting file to string:', error);
+                console.log(error);
             });
+    };
 
-        var doc = await addDocumentToCollection(picture, "tents");
-
-        const data = {
-            firstname: firstname,
-            lastname: lastname,
-            email: email,
-            age: calculateAge(age),
-            password: password,
-            picture: 'tents/' + doc,
-        };
-
-        // Call the function to add the document to the collection
-        addDocumentToCollection(data, "user");
-    }
-
+    /*
+        async function save() {
+    
+            var picture = {
+                url: "",
+                name: 'sdsd'
+            }
+    
+            await fileToString(fileList[0].originFileObj)
+                .then((fileContent) => {
+                    console.log('File content:', fileContent);
+                    picture.url = fileContent;
+                    // Perform further processing with the file content
+                })
+                .catch((error) => {
+                    console.error('Error converting file to string:', error);
+                });
+    
+            var doc = await addDocumentToCollection(picture, "tents");
+    
+            const data = {
+                firstname: firstname,
+                lastname: lastname,
+                email: email,
+                age: calculateAge(age),
+                password: password,
+                picture: 'tents/' + doc,
+            };
+    
+            // Call the function to add the document to the collection
+            addDocumentToCollection(data, "user");
+        }
+    */
     function anyToBlob(value) {
         const blob = new Blob([value], { type: 'application/octet-stream' });
         return blob;
@@ -203,7 +248,7 @@ export default function RegistrationPage() {
                 reject(error);
             };
 
-            reader.readAsDataURL(anyToBlob(file));
+            reader.readAsDataURL(file);
         });
     }
 
@@ -287,7 +332,7 @@ export default function RegistrationPage() {
                 </Modal>
 
                 <Form.Item>
-                    <button onClick={save} type="submit">Register</button>
+                    <button onClick={signUp} type="submit">Register</button>
                 </Form.Item>
             </Form>
         </div>

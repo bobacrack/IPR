@@ -53,7 +53,7 @@ function App() {
           <Route path="/chats" element={<div><Header backButton="/" /><Chats /></div>} />
           <Route path="/" element={<div><Header /><Card /><SwipeButtons /></div>} />
           <Route path='/login' element={<div><Header /> <RegistrationPage /></div>} />
-          <Route path='/signIn' element={<div><Header /> <SignUp /><SignIn/></div>} />
+          <Route path='/signIn' element={<div><Header /> <SignUp /><SignIn /></div>} />
 
         </Routes>
       </Router>
