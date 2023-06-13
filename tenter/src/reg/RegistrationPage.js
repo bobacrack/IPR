@@ -78,6 +78,7 @@ export default function RegistrationPage() {
     const [previewTitle, setPreviewTitle] = useState('');
     const [fileList, setFileList] = useState([]);
 
+
     const handleCancel = () => setPreviewOpen(false);
     const handlePreview = async (file) => {
         if (!file.url && !file.preview) {
@@ -95,6 +96,7 @@ export default function RegistrationPage() {
 
     const handleUpload = (options) => {
         const { file, onSuccess, onError } = options;
+
 
         // Simulate file upload process
         setTimeout(() => {
@@ -119,7 +121,7 @@ export default function RegistrationPage() {
         let fileList = [...info.fileList];
 
         // Limit the number of uploaded files
-        fileList = fileList.slice(-1);
+        fileList = fileList.slice(0, 1);
 
         // Update the file list state
         setFileList(fileList);
@@ -151,20 +153,58 @@ export default function RegistrationPage() {
         return age;
     }
 
-    function save() {
-        const picture = { url: fileToBase64(fileList[0]) }
-        const doc = addDocumentToCollection(picture, "tents");
+    async function save() {
+
+        var picture = {
+            url: "",
+            name: 'sdsd'
+        }
+
+        await fileToString(fileList[0])
+            .then((fileContent) => {
+                console.log('File content:', fileContent);
+                picture.url = fileContent;
+                // Perform further processing with the file content
+            })
+            .catch((error) => {
+                console.error('Error converting file to string:', error);
+            });
+
+        var doc = await addDocumentToCollection(picture, "tents");
+
         const data = {
             firstname: firstname,
             lastname: lastname,
             email: email,
             age: calculateAge(age),
             password: password,
-            picture: doc,
+            picture: 'tents/' + doc,
         };
 
         // Call the function to add the document to the collection
         addDocumentToCollection(data, "user");
+    }
+
+    function anyToBlob(value) {
+        const blob = new Blob([value], { type: 'application/octet-stream' });
+        return blob;
+    }
+
+    function fileToString(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                const fileContent = reader.result; // Extract the base64 string
+                resolve(fileContent);
+            };
+
+            reader.onerror = (error) => {
+                reject(error);
+            };
+
+            reader.readAsDataURL(anyToBlob(file));
+        });
     }
 
     return (
