@@ -43,7 +43,7 @@ function App() {
           <Route path="/" element={<div><Header /><Card /></div>} />
           <Route path='/register' element={<div><Header /> <RegistrationPage /></div>} />
           <Route path='/login' element={<div><Header /> <LogIn /></div>} />
-          <Route path='/profile/:uid' element={<div><Header /> <Profile /></div>} />
+          <Route path='/profile/:uid' element={<div><Header backButton="/" /><Profile /></div>} />
         </Routes>
       </Router>
     </div >
