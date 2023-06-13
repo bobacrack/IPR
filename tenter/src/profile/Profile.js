@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from "react";
 import "./Profile.css";
 import { database } from '../firebase';
-import { collection, doc, getDoc, deleteDoc } from "firebase/firestore";
+import { collection, doc, getDoc, deleteDoc, updateDoc } from "firebase/firestore";
 import { auth } from "../firebase";
 import { useParams } from "react-router-dom";
-import { Button, Modal } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Button, Modal, Form, Input, Upload } from 'antd';
+import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 
 
+const getBase64 = (file) =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+    });
 
 
 export default function Profile() {
@@ -17,15 +24,87 @@ export default function Profile() {
     const { uid } = useParams();
     const [tent, setTent] = useState([]);
 
-    const [open, setOpen] = useState(false);
+    const [openDelete, setOpenDelete] = useState(false);
+    const [openUpdate, setOpenUpdate] = useState(false);
+
+    const [firstname, setFirstname] = useState('');
+    const [lastname, setLastname] = useState('');
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [previewImage, setPreviewImage] = useState('');
+    const [previewTitle, setPreviewTitle] = useState('');
+    const [fileList, setFileList] = useState([]);
+    const [form] = Form.useForm();
 
     const showModal = () => {
-        setOpen(true);
+        setOpenDelete(true);
     };
 
     const hideModal = () => {
-        setOpen(false);
+        setOpenDelete(false);
     };
+
+    const showUpdate = () => {
+        setOpenUpdate(true);
+    };
+
+    const hideUpdate = () => {
+        setOpenUpdate(false);
+    };
+
+    const handleCancel = () => setPreviewOpen(false);
+    const handlePreview = async (file) => {
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj);
+        }
+        setPreviewImage(file.url || file.preview);
+        setPreviewOpen(true);
+        setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
+    };
+
+    const handleRemove = (file) => {
+        // Remove the file from the file list
+        setFileList((prevFileList) => prevFileList.filter((f) => f.uid !== file.uid));
+    };
+
+    const handleUpload = (options) => {
+        const { file, onSuccess, onError } = options;
+
+
+        // Simulate file upload process
+        setTimeout(() => {
+            // Process the uploaded file here (e.g., send it to a server or save it locally)
+            console.log('Uploaded file:', file);
+
+            // Update the file list state
+            setFileList((prevFileList) => [...prevFileList, file]);
+
+            // Call the success callback to indicate successful upload
+            onSuccess();
+
+            // Or call the error callback to indicate upload failure
+            // onError('Upload failed');
+        }, 2000);
+        fileList.forEach(element => {
+            console.log(element);
+        });
+    };
+
+    const handleChange = (info) => {
+        let fileList = [...info.fileList];
+
+        // Limit the number of uploaded files
+        fileList = fileList.slice(0, 1);
+
+        // Update the file list state
+        setFileList(fileList);
+    };
+
+    const uploadButton = (
+        <div>
+            <PlusOutlined />
+            <div style={{ marginTop: 8 }}>Upload</div>
+        </div>
+    );
 
     useEffect(() => {
         const fetchData = async () => {
@@ -53,6 +132,19 @@ export default function Profile() {
             console.log("Document deleted successfully.");
         } catch (error) {
             console.error("Error deleting document:", error);
+            throw error;
+        }
+    }
+    const onFinish = (values) => {
+        console.log(values);
+    };
+
+    async function updateDocument(collectionRef, documentId, updatedData) {
+        try {
+            await updateDoc(doc(collectionRef, documentId), updatedData);
+            console.log("Document updated successfully.");
+        } catch (error) {
+            console.error("Error updating document:", error);
             throw error;
         }
     }
@@ -89,8 +181,69 @@ export default function Profile() {
                 console.error('Error deleting user:', error);
             });
 
-        setOpen(false);
+        setOpenDelete(false);
     }
+
+    async function handleUpdate() {
+        const user = auth.currentUser;
+        var picture = {
+            url: "",
+            name: firstname + " " + lastname,
+        }
+
+        await fileToString(fileList[0].originFileObj)
+            .then((fileContent) => {
+                console.log('File content:', fileContent);
+                picture.url = fileContent;
+                // Perform further processing with the file content
+            })
+            .catch((error) => {
+                console.error('Error converting file to string:', error);
+            });
+
+        var doc = await updateDocument(collection(database, 'tents'), user.uid, picture)
+        const data = {
+            firstname: firstname,
+            lastname: lastname,
+            picture: 'tents/' + user.uid,
+        };
+
+        // Call the function to add the document to the collection
+        updateDocument(collection(database, 'user'), user.uid, data);
+        navigate('/profile/' + user.uid)
+    }
+
+    function fileToString(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                const fileContent = reader.result; // Extract the base64 string
+                resolve(fileContent);
+            };
+
+            reader.onerror = (error) => {
+                reject(error);
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
+
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+
+        switch (name) {
+            case 'firstname':
+                setFirstname(value);
+                break;
+            case 'lastname':
+                setLastname(value);
+                break;
+            default:
+                break;
+        }
+    };
 
     return (
         <div className="profile">
@@ -102,7 +255,7 @@ export default function Profile() {
                 </div>
                 <div className="formButton">
                     <div>
-                        <Button icon={<EditOutlined />} type="primary" size="large">
+                        <Button onClick={showUpdate} icon={<EditOutlined />} type="primary" size="large">
                             Edit
                         </Button>
                     </div>
@@ -115,13 +268,59 @@ export default function Profile() {
             </div>
             <Modal
                 title="Delete account?"
-                open={open}
+                open={openDelete}
                 onOk={handleDelete}
                 onCancel={hideModal}
                 okText="delete"
                 cancelText="cancel"
             >
                 <p>Are you sure you want to delete your account?</p>
+            </Modal>
+
+            <Modal
+                title="update account"
+                open={openUpdate}
+                onOk={handleUpdate}
+                onCancel={hideUpdate}
+                okText="save"
+                cancelText="cancel"
+            >
+                <Form className="registration-form" form={form} layout="vertical" onFinish={onFinish} validateTrigger="onBlur">
+                    <Form.Item
+                        label="Name"
+                        name="name"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please enter your name.",
+                            }
+                        ]}
+                    >
+                        <Input type="text" name="firstname" value={firstname} onChange={handleInputChange} placeholder="Enter your name" />
+                    </Form.Item>
+                    <Form.Item
+                        label="Last Name"
+                        name="lastName"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please enter your last name.",
+                            }
+                        ]}
+                    >
+                        <Input type="text" name="lastname" value={lastname} onChange={handleInputChange} placeholder="Enter your last name" />
+                    </Form.Item>
+                </Form>
+                <Upload
+                    listType="picture-card"
+                    fileList={fileList}
+                    customRequest={handleUpload}
+                    onRemove={handleRemove}
+                    onChange={handleChange}
+                    key="file-upload-component" // Add a unique key to the Upload component
+                >
+                    {fileList.length >= 1 ? null : uploadButton}
+                </Upload>
             </Modal>
         </div>
 

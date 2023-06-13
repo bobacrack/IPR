@@ -8,25 +8,30 @@ import './Card.css'
 export default function Card() {
 
     const [tents, setTents] = useState([]);
-    //const people = []
-
-    //runs based on condition
+    const t = []
 
     useEffect(() => {
         const fetchData = async () => {
             const querySnapshot = await getDocs(collection(database, "tents"));
-            const tentData = querySnapshot.docs.map((doc) => doc.data());
-            setTents(tentData);
+            const tentData = await querySnapshot.docs.map((doc) => doc.data());
+            await setTents(tentData);
         };
 
         fetchData();
+
     }, []);
 
+    function mapTents() {
+        tents.forEach(element => {
+            t.push(element)
+        });
+    }
 
+    mapTents()
 
     return (
         <div className='tinderCardsCOntainer'>
-            {tents.map((tent) => (
+            {t.map((tent) => (
                 <TinderCard className='swipe'
                     key={tent.name} preventSwipe={['up', 'down']}>
                     <div className='card' style={{ backgroundImage: `url(${tent.url})` }}>
