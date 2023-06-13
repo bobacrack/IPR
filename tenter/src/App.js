@@ -14,6 +14,7 @@ import { auth } from './firebase';
 
 function App() {
 
+
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
