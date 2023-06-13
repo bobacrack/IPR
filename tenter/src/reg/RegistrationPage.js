@@ -13,14 +13,34 @@ const getBase64 = (file) =>
         reader.onerror = (error) => reject(error);
     });
 
-async function addDocumentToCollection(documentData) {
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            const base64Data = reader.result.split(',')[1];
+            resolve(base64Data);
+        };
+
+        reader.onerror = (error) => {
+            reject(error);
+        };
+
+        reader.readAsDataURL(file);
+    });
+}
+
+async function addDocumentToCollection(documentData, document) {
     try {
-        const collectionRef = collection(database, "user");
+        const collectionRef = collection(database, document);
         const docRef = await addDoc(collectionRef, documentData);
         console.log('Document added with ID:', docRef.id);
+        return docRef.id
     } catch (error) {
         console.error('Error adding document:', error);
+        return ""
     }
+    return "";
 }
 
 export default function RegistrationPage() {
@@ -68,7 +88,42 @@ export default function RegistrationPage() {
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     };
 
-    const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
+    const handleRemove = (file) => {
+        // Remove the file from the file list
+        setFileList((prevFileList) => prevFileList.filter((f) => f.uid !== file.uid));
+    };
+
+    const handleUpload = (options) => {
+        const { file, onSuccess, onError } = options;
+
+        // Simulate file upload process
+        setTimeout(() => {
+            // Process the uploaded file here (e.g., send it to a server or save it locally)
+            console.log('Uploaded file:', file);
+
+            // Update the file list state
+            setFileList((prevFileList) => [...prevFileList, file]);
+
+            // Call the success callback to indicate successful upload
+            onSuccess();
+
+            // Or call the error callback to indicate upload failure
+            // onError('Upload failed');
+        }, 2000);
+        fileList.forEach(element => {
+            console.log(element);
+        });
+    };
+
+    const handleChange = (info) => {
+        let fileList = [...info.fileList];
+
+        // Limit the number of uploaded files
+        fileList = fileList.slice(-1);
+
+        // Update the file list state
+        setFileList(fileList);
+    };
 
     const uploadButton = (
         <div>
@@ -97,16 +152,19 @@ export default function RegistrationPage() {
     }
 
     function save() {
+        const picture = { url: fileToBase64(fileList[0]) }
+        const doc = addDocumentToCollection(picture, "tents");
         const data = {
             firstname: firstname,
             lastname: lastname,
             email: email,
             age: calculateAge(age),
             password: password,
+            picture: doc,
         };
 
         // Call the function to add the document to the collection
-        addDocumentToCollection(data);
+        addDocumentToCollection(data, "user");
     }
 
     return (
@@ -177,10 +235,12 @@ export default function RegistrationPage() {
                 <Upload
                     listType="picture-card"
                     fileList={fileList}
-                    onPreview={handlePreview}
+                    customRequest={handleUpload}
+                    onRemove={handleRemove}
                     onChange={handleChange}
+                    key="file-upload-component" // Add a unique key to the Upload component
                 >
-                    {fileList.length >= 8 ? null : uploadButton}
+                    {fileList.length >= 1 ? null : uploadButton}
                 </Upload>
                 <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
                     <img alt="example" style={{ width: '100%' }} src={previewImage} />
