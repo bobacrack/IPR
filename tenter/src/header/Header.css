@@ -6,7 +6,8 @@
 }
 
 .logo {
-    height: 40px;
+    height: 90px;
+    width: 900px;
     object-fit: contain;
 }
 

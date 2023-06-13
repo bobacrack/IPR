@@ -5,8 +5,9 @@ import IconButton from '@mui/material/IconButton';
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import "./Header.css";
 import { Link, useNavigate } from 'react-router-dom';
+import logo from './logo.png'
 
-function Header({backButton}) {
+function Header({ backButton }) {
     const nav = useNavigate();
     return (
         <div className="header">
@@ -17,18 +18,18 @@ function Header({backButton}) {
             ) : (
                 <IconButton>
                     <PersonIcon className='icon' fontSize='large' />
-                </IconButton>   
+                </IconButton>
             )}
-            
+
 
             <Link to="/">
-                <img className='logo' src='' alt='logo' />
+                <img className='logo' src={logo} alt='logo' />
             </Link>
 
             <Link to="/chats">
-            <IconButton>
-                <ForumIcon className='icon' fontSize='large' />
-            </IconButton>
+                <IconButton>
+                    <ForumIcon className='icon' fontSize='large' />
+                </IconButton>
             </Link>
         </div>
     )

@@ -6,6 +6,7 @@ import Card from './card/Card';
 import Chats from './Chats';
 import ChatScreen from './ChatScreen';
 import SwipeButtons from './SwipeButtons';
+import RegistrationPage from './reg/RegistrationPage';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -43,15 +44,17 @@ function App() {
 
     </div >
   */
-  <div className="App">
-    <Router>
-      <Routes>
-      <Route path="/chats/:tents" element={<div><Header backButton="/chats" /><ChatScreen /></div>} />
-        <Route path="/chats" element={<div><Header backButton="/" /><Chats /></div>} />
-        <Route path="/" element={<div><Header/><Card /><SwipeButtons /></div>} />
-      </Routes>
-    </Router>
-  </div>
+    <div className="App">
+      <Router>
+        <Routes>
+          <Route path="/chats/:tents" element={<div><Header backButton="/chats" /><ChatScreen /></div>} />
+          <Route path="/chats" element={<div><Header backButton="/" /><Chats /></div>} />
+          <Route path="/" element={<div><Header /><Card /><SwipeButtons /></div>} />
+          <Route path='/login' element={<div><Header /> <RegistrationPage /></div>} />
+
+        </Routes>
+      </Router>
+    </div>
   );
 }
 
