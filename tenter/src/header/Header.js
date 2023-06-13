@@ -6,7 +6,6 @@ import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import "./Header.css";
 import { Link, useNavigate } from 'react-router-dom';
 import logo from './logo.png'
-import { onAuthStateChanged } from "firebase/auth";
 import { auth } from '../firebase';
 import { signOut } from "firebase/auth";
 import { Button } from 'antd';

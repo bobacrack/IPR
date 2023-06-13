@@ -202,39 +202,6 @@ export default function RegistrationPage() {
             });
     };
 
-    /*
-        async function save() {
-    
-            var picture = {
-                url: "",
-                name: 'sdsd'
-            }
-    
-            await fileToString(fileList[0].originFileObj)
-                .then((fileContent) => {
-                    console.log('File content:', fileContent);
-                    picture.url = fileContent;
-                    // Perform further processing with the file content
-                })
-                .catch((error) => {
-                    console.error('Error converting file to string:', error);
-                });
-    
-            var doc = await addDocumentToCollection(picture, "tents");
-    
-            const data = {
-                firstname: firstname,
-                lastname: lastname,
-                email: email,
-                age: calculateAge(age),
-                password: password,
-                picture: 'tents/' + doc,
-            };
-    
-            // Call the function to add the document to the collection
-            addDocumentToCollection(data, "user");
-        }
-    */
     function anyToBlob(value) {
         const blob = new Blob([value], { type: 'application/octet-stream' });
         return blob;
