@@ -57,7 +57,23 @@ function Header({ backButton }) {
                 </Link>
             </div>
 
+
+
         </div>
+
+        /*
+
+        <div>
+                <Button onClick={handleLogout} type="primary" size='large'>
+                    Logout
+                </Button>
+                <Link to="/chats">
+                    <IconButton>
+                        <ForumIcon className='icon' fontSize='large' />
+                    </IconButton>
+                </Link>
+            </div>
+         */
     )
 }
 

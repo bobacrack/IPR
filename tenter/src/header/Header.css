@@ -6,9 +6,9 @@
 }
 
 .logo {
-    height: 90px;
-    width: 900px;
     object-fit: contain;
+    height: 90px;
+
 }
 
 .icon {

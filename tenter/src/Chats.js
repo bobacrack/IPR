@@ -1,17 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react'
 import './Chats.css';
 import Chat from "./Chat";
+import { database } from './firebase';
+import { collection, getDocs } from "firebase/firestore";
 
-function Chats(){
+function Chats() {
+
+    const [tents, setTents] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const querySnapshot = await getDocs(collection(database, "tents"));
+            const tentData = querySnapshot.docs.map((doc) => doc.data());
+            setTents(tentData);
+        };
+
+        fetchData();
+
+    }, []);
     return (
         <div className="chats">
-            <Chat
-                name="Mark"
-                message="Yo whats up!"
-                timestamp="40 seconds ago"
-                profilePic="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.llU0i1WStG4Yh8RIq7YiPwHaE7%26pid%3DApi&f=1&ipt=51f7bfcfc7aa30858cfb8d59b1018c1b83598c73c10de3d89161fb794c8d3988&ipo=images"
-            />
-            <Chat
+            {tents.map((tent) => (
+                <Chat
+                    name={tent.name}
+                    message="Yo whats up!"
+                    timestamp="40 seconds ago"
+                    profilePic={tent.url}
+                />
+            ))}
+        </div>
+
+        /*
+         <Chat
                 name="Ellen"
                 message="Hey how are you?"
                 timestamp="40 seconds ago"
@@ -29,8 +49,8 @@ function Chats(){
                 timestamp="40 seconds ago"
                 profilePic="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.g78nIZAaM_h5rXyuhPv4sgAAAA%26pid%3DApi&f=1&ipt=b0014ab711ea31e686626a15d32ed1272c8b35ed5c5d25b6d63f816d1492f812&ipo=images"
             />
-        
-        </div>
+        */
+
     );
 }
 
