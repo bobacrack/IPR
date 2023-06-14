@@ -39,11 +39,11 @@ function App() {
       <Router>
         <Routes>
           <Route path="/chats/:tents" element={<div><Header backButton="/chats" /><ChatScreen /></div>} />
-          <Route path="/chats" element={<div><Header backButton="/" /><Chats /></div>} />
-          <Route path="/" element={<div><Header /><Card /></div>} />
+          <Route path="/chats" element={<div><Header backButton="ySW" /><Chats /></div>} />
+          <Route path="/:uid" element={<div><Header /><Card /></div>} />
           <Route path='/register' element={<div><Header /> <RegistrationPage /></div>} />
           <Route path='/login' element={<div><Header /> <LogIn /></div>} />
-          <Route path='/profile/:uid' element={<div><Header backButton="/" /><Profile /></div>} />
+          <Route path='/profile/:uid' element={<div><Header backButton="ysw" /><Profile /></div>} />
         </Routes>
       </Router>
     </div >

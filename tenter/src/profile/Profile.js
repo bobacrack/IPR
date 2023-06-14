@@ -143,15 +143,7 @@ export default function Profile() {
         console.log(values);
     };
 
-    async function updateDocument(collectionRef, documentId, updatedData) {
-        try {
-            await updateDoc(doc(collectionRef, documentId), updatedData);
-            console.log("Document updated successfully.");
-        } catch (error) {
-            console.error("Error updating document:", error);
-            throw error;
-        }
-    }
+
 
     function handleDelete() {
         const user = auth.currentUser;
@@ -186,6 +178,16 @@ export default function Profile() {
             });
 
         setOpenDelete(false);
+    }
+
+    async function updateDocument(collectionRef, documentId, updatedData) {
+        try {
+            await updateDoc(doc(collectionRef, documentId), updatedData);
+            console.log("Document updated successfully.");
+        } catch (error) {
+            console.error("Error updating document:", error);
+            throw error;
+        }
     }
 
     async function handleUpdate() {

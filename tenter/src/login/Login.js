@@ -11,13 +11,14 @@ const LogIn = () => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
 
+
     const signIn = (e) => {
         e.preventDefault();
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 // Signed in
                 const user = userCredential.user;
-                navigate("/")
+                navigate(`/${user.uid}`)
                 console.log(user);
             })
             .catch((error) => {

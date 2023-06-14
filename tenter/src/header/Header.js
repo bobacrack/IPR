@@ -28,12 +28,17 @@ function Header({ backButton }) {
         navigate(`/profile/${uid}`);
     };
 
+    const home = () => {
+        const uid = auth.currentUser.uid
+        navigate(`/${uid}`);
+    }
+
 
 
     return (
         <div className="header">
             {backButton ? (
-                <IconButton data-testid="backButton" onClick={() => navigate(backButton)}>
+                <IconButton data-testid="backButton" onClick={() => navigate(`/${auth.currentUser.uid}`)}>
                     <ArrowBackIosIcon fontSize="large" className="header__icon" />
                 </IconButton>
             ) : (
@@ -44,7 +49,7 @@ function Header({ backButton }) {
 
 
 
-            <Link to="/">
+            <Link to={home}>
                 <img className='logo' src={logo} alt='logo' />
             </Link>
 
