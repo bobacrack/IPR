@@ -4,11 +4,14 @@ import "./ChatScreen.css";
 import { database, auth } from './firebase';
 import { collection, addDoc, serverTimestamp, doc, getDoc, getDocs } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { message } from 'antd';
+import { useParams } from 'react-router-dom';
+
 
 
 
 function ChatScreen() {
+    const { receiverInfo } = useParams();
+    console.log("ReciverInfo aus URL: " + receiverInfo);
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState([]);
     const [userID, setUserID] = useState(null);
@@ -45,7 +48,7 @@ function ChatScreen() {
 
         const newMessage = {
             message: input,
-            recevierId: "cPXREW7ssjenYSKdgtHI89jgUTp1",
+            recevierId: receiverInfo,
             senderId: userID,
             timestamp: serverTimestamp()
         };
@@ -62,19 +65,6 @@ function ChatScreen() {
         setInput("")
     };
 
-    const getName = async (documentId) => {
-        const docRef = doc(database, "tents", documentId);
-        const docSnapshot = await getDoc(docRef);
-
-        if (docSnapshot.exists()) {
-            const data = docSnapshot.data();
-            const name = data.name;
-            return name;
-        } else {
-            console.log('Das Dokument wurde nicht gefunden.');
-            return null;
-        }
-    };
 
     // Beispielaufruf
 
@@ -82,19 +72,18 @@ function ChatScreen() {
     return (
         <div className="chatScreen">
             <p className="chatScreen__timestamp">YOU MATCHED WITH ELLEN ON 10/10/2023</p>
-            {messages.map((message, index) => (
 
-                message.senderId !== userID ? (
+            {messages.map((message, index) => (
+                (message.senderId === userID && message.recevierId === receiverInfo) ? (
+                    <div key={index} className="chatScreen__message">
+                        <p className="chatScreen__textUser">{message.message}</p>
+                    </div>
+                ) : (message.senderId !== userID && message.senderId === receiverInfo) ? (
                     <div key={index} className="chatScreen__message">
                         <Avatar className="chatScreen__image" alt={message.recevierIds} src={message.image} />
                         <p className="chatScreen__text">{message.message}</p>
                     </div>
-                ) : (
-                    <div key={index} className="chatScreen__message">
-                        <p className="chatScreen__textUser">{message.message}</p>
-                    </div>
-                )
-
+                ) : null
             ))}
 
             <form className="chatScreen__input">

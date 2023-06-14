@@ -38,7 +38,7 @@ function App() {
     < div className="App" >
       <Router>
         <Routes>
-          <Route path="/chats/:tents" element={<div><Header backButton="/chats" /><ChatScreen /></div>} />
+          <Route path="/chats/:receiverInfo" element={<div><Header backButton="/chats" /><ChatScreen /></div>} />
           <Route path="/chats" element={<div><Header backButton="ySW" /><Chats /></div>} />
           <Route path="/:uid" element={<div><Header /><Card /></div>} />
           <Route path='/register' element={<div><Header /> <RegistrationPage /></div>} />

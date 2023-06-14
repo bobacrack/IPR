@@ -24,6 +24,7 @@ function Chats() {
                 <Chat
                     key={index}
                     name={tent.name}
+                    receiverInfo={tent.uuid}
                     message="Yo whats up!"
                     timestamp="40 seconds ago"
                     profilePic={tent.url}

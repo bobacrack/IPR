@@ -4,9 +4,10 @@ import { Link } from 'react-router-dom';
 import "./Chat.css";
 
 
-function Chat({ name, message, profilePic, timestamp }) {
+function Chat({ name, receiverInfo, message, profilePic, timestamp }) {
+
     return (
-        <Link to={`/chats/${name}`}>
+        <Link to={`/chats/${receiverInfo}`}>
             <div className="chat">
                 <Avatar className="chat__image" src={profilePic} />
                 <div className="chat__details">
