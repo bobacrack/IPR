@@ -9,6 +9,7 @@ const LogIn = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState(null);
 
     const signIn = (e) => {
         e.preventDefault();
@@ -23,6 +24,7 @@ const LogIn = () => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 console.log(errorCode, errorMessage)
+                setError(`${errorCode} ${errorMessage}`);
             });
 
     };
@@ -43,6 +45,7 @@ const LogIn = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 ></input>
+                {error && <p className="error">{error}</p>} {/* Display the error message if present */}
                 <button type="submit">Log In</button>
                 <a href="/register">No account? register now!
                 </a>

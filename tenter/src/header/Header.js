@@ -28,10 +28,12 @@ function Header({ backButton }) {
         navigate(`/profile/${uid}`);
     };
 
+
+
     return (
         <div className="header">
             {backButton ? (
-                <IconButton onClick={() => navigate(backButton)}>
+                <IconButton data-testid="backButton" onClick={() => navigate(backButton)}>
                     <ArrowBackIosIcon fontSize="large" className="header__icon" />
                 </IconButton>
             ) : (
@@ -47,7 +49,7 @@ function Header({ backButton }) {
             </Link>
 
             <div>
-                <Button onClick={handleLogout} type="primary" size='large'>
+                <Button data-testid="logout" onClick={handleLogout} type="primary" size='large'>
                     Logout
                 </Button>
                 <Link to="/chats">
@@ -59,21 +61,7 @@ function Header({ backButton }) {
 
 
 
-        </div>
-
-        /*
-
-        <div>
-                <Button onClick={handleLogout} type="primary" size='large'>
-                    Logout
-                </Button>
-                <Link to="/chats">
-                    <IconButton>
-                        <ForumIcon className='icon' fontSize='large' />
-                    </IconButton>
-                </Link>
-            </div>
-         */
+        </div >
     )
 }
 

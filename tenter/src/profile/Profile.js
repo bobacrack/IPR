@@ -129,6 +129,7 @@ export default function Profile() {
 
 
 
+
     async function deleteDocument(collectionRef, documentId) {
         try {
             await deleteDoc(doc(collectionRef, documentId));
@@ -189,7 +190,10 @@ export default function Profile() {
 
     async function handleUpdate() {
         const user = auth.currentUser;
-        var names = tent.name.split(' ');
+        var names = []
+        if (tent.name) {
+            names = tent.name.split(' ');
+        }
         var picture = {
             name: (firstname !== "" ? firstname : names[0]) + " " + (lastname !== "" ? lastname : names[1])
         }
@@ -276,7 +280,7 @@ export default function Profile() {
                 open={openDelete}
                 onOk={handleDelete}
                 onCancel={hideModal}
-                okText="delete"
+                okText="yes"
                 cancelText="cancel"
             >
                 <p>Are you sure you want to delete your account?</p>
@@ -294,7 +298,7 @@ export default function Profile() {
                 <Input type="text" name="firstname" value={firstname} onChange={handleInputChange} placeholder="Enter your name" />
 
                 <Input type="text" name="lastname" value={lastname} onChange={handleInputChange} placeholder="Enter your last name" />
-                <Upload
+                <Upload alt="Upload"
                     listType="picture-card"
                     fileList={fileList}
                     customRequest={handleUpload}

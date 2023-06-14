@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef, useMemo } from 'react'
 
 import TinderCard from "react-tinder-card"
 import { database } from '../firebase';
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, getDoc, doc } from "firebase/firestore";
+import { auth } from "../firebase";
 import './Card.css'
 
 
@@ -25,6 +26,9 @@ export default function Card() {
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [lastDirection, setLastDirection] = useState();
     const currentIndexRef = useRef(currentIndex);
+    const [likes, setLikes] = useState([])
+
+
     const childRefs = useMemo(
         () =>
             Array(tents.length)
@@ -35,14 +39,13 @@ export default function Card() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const querySnapshot = await getDocs(collection(database, "tents"));
+            const querySnapshot = await getDocs(collection(database, "tents",));
             const tentData = querySnapshot.docs.map((doc) => doc.data());
             setTents(tentData);
             setCurrentIndex(tentData.length - 1);
         };
 
         fetchData();
-
     }, []);
 
 
@@ -50,6 +53,7 @@ export default function Card() {
         setCurrentIndex(val)
         currentIndexRef.current = val
     }
+
 
     const canGoBack = currentIndex < tents.length - 1
     console.log("CurrentIndex" + currentIndex);
@@ -103,7 +107,7 @@ export default function Card() {
                             style={{ backgroundImage: 'url(' + tent.url + ')' }}
                             className='card'
                         >
-                            <h3>{tent.name}</h3>
+                            <h3>{tent.name}  ({ })</h3>
                         </div>
                     </TinderCard>
                 ))}
