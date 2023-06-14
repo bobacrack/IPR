@@ -49,9 +49,6 @@ export default function Card() {
                     getFieldFromSnapshot(docSnapshot, 'disliked').forEach(d => {
                         dislikes.push(d)
                     });
-                    dislikes.forEach(l => {
-                        console.log("disliked: " + l)
-                    })
                     setLikes(likeData);
                 } else {
                     const collectionRef = collection(database, 'likes');
