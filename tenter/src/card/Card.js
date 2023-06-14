@@ -17,13 +17,13 @@ import '../SwipeButtons.css';
 
 export default function Card() {
     const { uid } = useParams();
-    console.log(uid);
     const [tents, setTents] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [lastDirection, setLastDirection] = useState();
     const currentIndexRef = useRef(currentIndex);
-    const [likes, setLikes] = useState([]);
+    var [likes, setLikes] = useState([]);
     var [dislikes, setDislikes] = useState([uid]);
+    var [otherLikes, setOtherLikes] = useState({ disliked: [], likedMe: [], myLikes: [] })
 
     const childRefs = useMemo(
         () =>
@@ -111,15 +111,34 @@ export default function Card() {
         updateCurrentIndex(index - 1)
     }
 
+    async function getLickyMaBally(uuid) {
+        const fetchData = async () => {
+            try {
+                const docRef = doc(database, 'likes', uuid);
+                const docSnapshot = await getDoc(docRef);
 
-    async function updateDocument(collectionRef, documentId, updatedData) {
-        try {
-            await updateDoc(doc(collectionRef, documentId), updatedData);
-            console.log("Document updated successfully.");
-        } catch (error) {
-            console.error("Error updating document:", error);
-            throw error;
-        }
+                if (docSnapshot.exists()) {
+                    const likeData = docSnapshot.data();
+                    setOtherLikes(likeData);
+                    otherLikes = likeData
+                    otherLikes.likedMe.push(uid)
+                    await updateDoc(doc(collection(database, 'likes'), String(uuid)), otherLikes);
+                    console.log("Document updated successfully.");
+                    if (likes.myLikes.includes(String(uuid)) && otherLikes.likedMe.includes(String(uid))) {
+                        console.log("match")
+                    }
+                } else {
+                    const collectionRef = collection(database, "likes");
+                    await setDoc(doc(collectionRef, uid), { likedMe: [], myLikes: [], disliked: [] });
+                    console.log(`added like document with uid: ${uid}`);
+                }
+            } catch (error) {
+                console.error('Error fetching tent document:', error);
+            }
+        };
+
+        fetchData();
+
     }
 
     const outOfFrame = (dir, name, idx, uuid) => {
@@ -132,6 +151,10 @@ export default function Card() {
         if (dir === 'right') {
             likes.myLikes.push(String(uuid))
             updateDoc(doc(collection(database, 'likes'), uid), likes)
+            getLickyMaBally(uuid)
+            console.log(likes)
+            console.log(otherLikes)
+
         }
         if (dir === 'left') {
             likes.disliked.push(String(uuid))
