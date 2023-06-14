@@ -27,8 +27,8 @@ export default function Profile() {
     const [openDelete, setOpenDelete] = useState(false);
     const [openUpdate, setOpenUpdate] = useState(false);
 
-    const [firstname, setFirstname] = useState('');
-    const [lastname, setLastname] = useState('');
+    var [firstname, setFirstname] = useState('');
+    var [lastname, setLastname] = useState('');
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
@@ -124,7 +124,10 @@ export default function Profile() {
         };
 
         fetchData();
+
     }, [uid]);
+
+
 
     async function deleteDocument(collectionRef, documentId) {
         try {
@@ -186,31 +189,32 @@ export default function Profile() {
 
     async function handleUpdate() {
         const user = auth.currentUser;
+        var names = tent.name.split(' ');
         var picture = {
-            url: "",
-            name: firstname + " " + lastname,
+            name: (firstname !== "" ? firstname : names[0]) + " " + (lastname !== "" ? lastname : names[1])
         }
-
-        await fileToString(fileList[0].originFileObj)
-            .then((fileContent) => {
-                console.log('File content:', fileContent);
-                picture.url = fileContent;
-                // Perform further processing with the file content
-            })
-            .catch((error) => {
-                console.error('Error converting file to string:', error);
-            });
-
+        if (fileList.length > 0) {
+            await fileToString(fileList[0].originFileObj)
+                .then((fileContent) => {
+                    console.log('File content:', fileContent);
+                    picture.url = fileContent;
+                    // Perform further processing with the file content
+                })
+                .catch((error) => {
+                    console.error('Error converting file to string:', error);
+                });
+        }
         var doc = await updateDocument(collection(database, 'tents'), user.uid, picture)
-        const data = {
-            firstname: firstname,
-            lastname: lastname,
-            picture: 'tents/' + user.uid,
-        };
 
         // Call the function to add the document to the collection
+
+        const data = {
+            firstname: firstname != "" ? firstname : names[0],
+            lastname: lastname,
+        };
         updateDocument(collection(database, 'user'), user.uid, data);
-        navigate('/profile/' + user.uid)
+        setOpenUpdate(false);
+        window.location.reload()
     }
 
     function fileToString(file) {
@@ -264,6 +268,7 @@ export default function Profile() {
                             Delete
                         </Button>
                     </div>
+
                 </div>
             </div>
             <Modal
@@ -285,32 +290,10 @@ export default function Profile() {
                 okText="save"
                 cancelText="cancel"
             >
-                <Form className="registration-form" form={form} layout="vertical" onFinish={onFinish} validateTrigger="onBlur">
-                    <Form.Item
-                        label="Name"
-                        name="name"
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please enter your name.",
-                            }
-                        ]}
-                    >
-                        <Input type="text" name="firstname" value={firstname} onChange={handleInputChange} placeholder="Enter your name" />
-                    </Form.Item>
-                    <Form.Item
-                        label="Last Name"
-                        name="lastName"
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please enter your last name.",
-                            }
-                        ]}
-                    >
-                        <Input type="text" name="lastname" value={lastname} onChange={handleInputChange} placeholder="Enter your last name" />
-                    </Form.Item>
-                </Form>
+
+                <Input type="text" name="firstname" value={firstname} onChange={handleInputChange} placeholder="Enter your name" />
+
+                <Input type="text" name="lastname" value={lastname} onChange={handleInputChange} placeholder="Enter your last name" />
                 <Upload
                     listType="picture-card"
                     fileList={fileList}
