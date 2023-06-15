@@ -40,7 +40,7 @@ function App() {
           <Route path="/chats" element={<div><Header backButton="ySW" /><Chats /></div>} />
           <Route path="/:uid" element={<div><Header /><Card /></div>} />
           <Route path='/register' element={<div><Header /> <RegistrationPage /></div>} />
-          <Route exact path='/' element={<div><Header /> <LogIn /></div>} />
+          <Route exact path='/login' element={<div><Header /> <LogIn /></div>} />
           <Route path='/profile/:uid' element={<div><Header backButton="ysw" /><Profile /></div>} />
         </Routes>
       </Router>
