@@ -55,6 +55,8 @@
   "devDependencies": {
     "firebase-mock": "^2.3.2",
     "firebase-tools": "^12.3.1",
-    "jest": "^23.6.0"
+    "istanbul": "^0.4.5",
+    "jest": "^23.6.0",
+    "jest-extended": "^4.0.0"
   }
 }
