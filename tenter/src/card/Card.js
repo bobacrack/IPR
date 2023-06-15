@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import TinderCard from 'react-tinder-card';
 import { collection, getDocs, setDoc, getDoc, doc, updateDoc, query, where } from 'firebase/firestore';
 import { database } from '../firebase';
@@ -21,11 +21,14 @@ export default function Card() {
     const [tents, setTents] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [lastDirection, setLastDirection] = useState();
+    const [receiverInfo, setReceiverInfo] = useState('');
     const currentIndexRef = useRef(currentIndex);
     var [likes, setLikes] = useState([]);
     var [dislikes, setDislikes] = useState([uid]);
     var [otherLikes, setOtherLikes] = useState({ disliked: [], likedMe: [], myLikes: [] })
     const { width, height } = useWindowSize()
+    const navigate = useNavigate();
+
 
     const childRefs = useMemo(
         () =>
@@ -43,6 +46,15 @@ export default function Card() {
         const fieldValue = data ? data[fieldName] : undefined;
         return fieldValue;
     };
+
+    useEffect(() => {
+        if (currentIndex >= 0 && currentIndex < tents.length) {
+            const currentTent = tents[currentIndex];
+            const tentUUID = currentTent.uuid;
+            console.log("Current Tent UUID: ", tentUUID);
+            setReceiverInfo(tentUUID);
+        }
+    }, [currentIndex, tents]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -220,7 +232,7 @@ export default function Card() {
                 <IconButton style={{ backgroundColor: !canSwipe && '#c3c4d3' }} onClick={() => swipe('left')} className="swipeButtons__left">
                     <CloseIcon fontSize="large" />
                 </IconButton>
-                <IconButton className="swipeButtons__star">
+                <IconButton onClick={() => navigate(`/chats/${receiverInfo}`)} className="swipeButtons__star">
                     <StarRateIcon fontSize="large" />
                 </IconButton>
                 <IconButton style={{ backgroundColor: !canSwipe && '#c3c4d3' }} onClick={() => swipe('right')} className="swipeButtons__right">
