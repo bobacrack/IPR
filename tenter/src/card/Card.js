@@ -29,7 +29,7 @@ export default function Card() {
     const { width, height } = useWindowSize()
     const navigate = useNavigate();
 
-
+    //Test
     const childRefs = useMemo(
         () =>
             Array(tents.length)
@@ -118,7 +118,7 @@ export default function Card() {
 
 
     const canGoBack = currentIndex < tents.length - 1
-    console.log("CurrentIndex" + currentIndex);
+    console.log("CurrentIndex2" + currentIndex);
 
     const canSwipe = currentIndex >= 0
 
