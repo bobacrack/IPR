@@ -184,6 +184,7 @@ export default function RegistrationPage() {
 
                 // Call the function to add the document to the collection
                 addDocumentToCollection(data, "user", userCredential.user.uid);
+                addDocumentToCollection({ matches: [] }, "matches", userCredential.user.uid);
 
             })
             .catch((error) => {

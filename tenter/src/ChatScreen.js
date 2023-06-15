@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import "./ChatScreen.css";
 import { database, auth } from './firebase';
-import { collection, addDoc, serverTimestamp, doc, getDoc, getDocs, onSnapshot } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, getDoc, query, where, getDocs, onSnapshot } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { useParams } from 'react-router-dom';
 
@@ -20,7 +20,10 @@ function ChatScreen() {
     useEffect(() => {
         const fetchData = async () => {
             const querySnapshot = await getDocs(collection(database, "chats"));
+            //const q = query(collection(database, 'chats'), where('recevierId', '==', String(userID)));
+            //const querySnapshot = await getDoc(q)
             const tempData = querySnapshot.docs.map((doc) => doc.data());
+            console.log(tempData)
             setMessages(tempData.sort((a, b) => a.timestamp - b.timestamp));
         };
 
@@ -79,11 +82,11 @@ function ChatScreen() {
             <p className="chatScreen__timestamp">YOU MATCHED WITH ELLEN ON {date}</p>
 
             {messages.map((message, index) => (
-                (message.senderId === userID && message.recevierId === receiverInfo) ? (
+                (String(message.senderId) === String(userID) && String(message.recevierId) === String(receiverInfo)) ? (
                     <div key={index} className="chatScreen__message">
                         <p className="chatScreen__textUser">{message.message}</p>
                     </div>
-                ) : (message.senderId !== userID && message.senderId === receiverInfo) ? (
+                ) : (String(message.senderId) !== String(userID) && String(message.senderId) === String(receiverInfo)) ? (
                     <div key={index} className="chatScreen__message">
                         <Avatar className="chatScreen__image" alt={message.recevierIds} src={message.image} />
                         <p className="chatScreen__text">{message.message}</p>
