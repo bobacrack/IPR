@@ -11,13 +11,13 @@
     border-radius: 20px;
 }
 
-.chatScreen__timestamp{
+.chatScreen__timestamp {
     text-align: center;
-    padding: 20px;  
+    padding: 20px;
     color: gray;
 }
 
-.chatScreen__textUser{
+.chatScreen__textUser {
     margin-left: auto;
     background-color: #29b3cd;
     padding: 15px;
@@ -25,7 +25,7 @@
     color: white;
 }
 
-.chatScreen__input{
+.chatScreen__input {
     display: flex;
     padding: 5px;
     position: fixed;
@@ -34,13 +34,13 @@
     border-top: 1px solid lightgray;
 }
 
-.chatScreen__inputField{
+.chatScreen__inputField {
     flex: 1;
     padding: 10px;
     border: none;
 }
 
-.chatScreen__inputButton { 
+.chatScreen__inputButton {
     border: none;
     margin-right: 20px;
     background-color: white;

@@ -21,7 +21,7 @@ function ChatScreen() {
         const fetchData = async () => {
             const querySnapshot = await getDocs(collection(database, "chats"));
             const tentData = querySnapshot.docs.map((doc) => doc.data());
-            setMessages(tentData);
+            setMessages(tentData.sort((a, b) => a.timestamp.nanoseconds - b.timestamp.nanoseconds));
 
         };
         const unsubscribe = onAuthStateChanged(auth, (user) => {
