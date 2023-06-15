@@ -267,7 +267,7 @@ export default function Profile() {
                 </div>
                 <div className="formButton">
                     <div>
-                        <Button data-testid="edit" onClick={showUpdate} icon={<EditOutlined />} type="primary" size="large">
+                        <Button onClick={showUpdate} icon={<EditOutlined />} type="primary" size="large">
                             Edit
                         </Button>
                     </div>
