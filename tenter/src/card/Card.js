@@ -118,7 +118,7 @@ export default function Card() {
 
 
     const canGoBack = currentIndex < tents.length - 1
-    console.log("CurrentIndex2" + currentIndex);
+    console.log("CurrentIndex" + currentIndex);
 
     const canSwipe = currentIndex >= 0
 
