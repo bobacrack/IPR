@@ -80,7 +80,6 @@ function ChatScreen() {
     return (
         <div className="chatScreen">
             <p className="chatScreen__timestamp">YOU MATCHED WITH ELLEN ON {date}</p>
-
             {messages.map((message, index) => (
                 (String(message.senderId) === String(userID) && String(message.recevierId) === String(receiverInfo)) ? (
                     <div key={index} className="chatScreen__message">
@@ -95,10 +94,9 @@ function ChatScreen() {
             ))}
 
             <form className="chatScreen__input">
-                <input value={input} onChange={e => setInput(e.target.value)} className="chatScreen__inputField" placeholder="Type a message..." type="text" />
-                <button onClick={handleSend} type="submit" className="chatScreen__inputButton">SEND</button>
+                <input data-testid="inputText" value={input} onChange={e => setInput(e.target.value)} className="chatScreen__inputField" placeholder="Type a message..." type="text" />
+                <button data-testid="sendButton" onClick={handleSend} type="submit" className="chatScreen__inputButton">SEND</button>
             </form>
-
         </div>
     );
 }
