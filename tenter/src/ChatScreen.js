@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import "./ChatScreen.css";
 import { database, auth } from './firebase';
-import { collection, addDoc, serverTimestamp, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, getDoc, getDocs, onSnapshot } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { useParams } from 'react-router-dom';
 
@@ -20,27 +20,31 @@ function ChatScreen() {
     useEffect(() => {
         const fetchData = async () => {
             const querySnapshot = await getDocs(collection(database, "chats"));
-            const tentData = querySnapshot.docs.map((doc) => doc.data());
-            setMessages(tentData.sort((a, b) => a.timestamp.nanoseconds - b.timestamp.nanoseconds));
-
+            const tempData = querySnapshot.docs.map((doc) => doc.data());
+            setMessages(tempData.sort((a, b) => a.timestamp.nanoseconds - b.timestamp.nanoseconds));
         };
+
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 const uid = user.uid;
                 setUserID(uid);
                 console.log("USER", uid);
             } else {
-                // User is signed out
-                // ...
-                console.log("user is logged out");
+                console.log("User is logged out");
             }
         });
 
         fetchData();
 
+        const unsubscribeRealtime = onSnapshot(collection(database, "chats"), (snapshot) => {
+            const updatedData = snapshot.docs.map((doc) => doc.data());
+            setMessages(updatedData.sort((a, b) => a.timestamp.nanoseconds - b.timestamp.nanoseconds));
+        });
 
-        return () => unsubscribe();
-
+        return () => {
+            unsubscribe();
+            unsubscribeRealtime();
+        };
     }, []);
 
     const handleSend = async (e) => {
@@ -65,13 +69,14 @@ function ChatScreen() {
         setInput("")
     };
 
+    const date = new Date().toDateString()
 
     // Beispielaufruf
 
 
     return (
         <div className="chatScreen">
-            <p className="chatScreen__timestamp">YOU MATCHED WITH ELLEN ON 10/10/2023</p>
+            <p className="chatScreen__timestamp">YOU MATCHED WITH ELLEN ON {date}</p>
 
             {messages.map((message, index) => (
                 (message.senderId === userID && message.recevierId === receiverInfo) ? (

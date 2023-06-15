@@ -5,7 +5,8 @@ import { collection, getDocs, setDoc, getDoc, doc, updateDoc, query, where } fro
 import { database } from '../firebase';
 import { auth } from '../firebase';
 import './Card.css';
-
+import Confetti from 'react-confetti'
+import useWindowSize from 'react-use/lib/useWindowSize'
 import ReplayIcon from '@material-ui/icons/Replay';
 import CloseIcon from '@material-ui/icons/Close';
 import StarRateIcon from '@material-ui/icons/StarRate';
@@ -24,6 +25,7 @@ export default function Card() {
     var [likes, setLikes] = useState([]);
     var [dislikes, setDislikes] = useState([uid]);
     var [otherLikes, setOtherLikes] = useState({ disliked: [], likedMe: [], myLikes: [] })
+    const { width, height } = useWindowSize()
 
     const childRefs = useMemo(
         () =>
@@ -32,6 +34,9 @@ export default function Card() {
                 .map((i) => React.createRef()),
         [tents.length]
     );
+
+    const [showConfetti, setShowConfetti] = useState(false);
+
 
     const getFieldFromSnapshot = (docSnapshot, fieldName) => {
         const data = docSnapshot.data();
@@ -125,7 +130,7 @@ export default function Card() {
                     await updateDoc(doc(collection(database, 'likes'), String(uuid)), otherLikes);
                     console.log("Document updated successfully.");
                     if (likes.myLikes.includes(String(uuid)) && otherLikes.likedMe.includes(String(uid))) {
-                        console.log("match")
+                        setShowConfetti(true)
                     }
                 } else {
                     const collectionRef = collection(database, "likes");
@@ -182,6 +187,14 @@ export default function Card() {
 
     return (
         <div>
+            {showConfetti && <Confetti
+                run={true}
+                tweenDuration={100}
+                width={width}
+                height={height}
+            />
+            }
+
             <div className='tinderCardsCOntainer'>
                 {tents.map((tent, index) => (
                     <TinderCard
@@ -195,7 +208,7 @@ export default function Card() {
                             style={{ backgroundImage: 'url(' + tent.url + ')' }}
                             className='card'
                         >
-                            <h3>{tent.name}  ({ })</h3>
+                            <h1>{tent.name}  ({ })</h1>
                         </div>
                     </TinderCard>
                 ))}
