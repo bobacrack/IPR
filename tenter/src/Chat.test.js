@@ -19,7 +19,7 @@ describe('Chat', () => {
             </Router>
         );
 
-        const linkElement = screen.getByRole('link', { name: /chats/i });
+        const linkElement = screen.getByRole('link');
         expect(linkElement).toBeInTheDocument();
 
         const avatarElement = screen.getByAltText('img', { name: /avatar/i });

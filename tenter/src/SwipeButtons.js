@@ -11,19 +11,19 @@ import "./SwipeButtons.css";
 const SwipeButtons = () => {
     return (
         <div className="swipeButtons">
-            <IconButton className="swipeButtons__repeat">
+            <IconButton data-testid="swipe-button-repeat" className="swipeButtons__repeat">
                 <ReplayIcon fontSize="large" />
             </IconButton>
-            <IconButton className="swipeButtons__left">
+            <IconButton data-testid="swipe-button-left" className="swipeButtons__left">
                 <CloseIcon fontSize="large" />
             </IconButton>
-            <IconButton className="swipeButtons__star">
+            <IconButton data-testid="swipe-button-star" className="swipeButtons__star">
                 <StarRateIcon fontSize="large" />
             </IconButton>
-            <IconButton className="swipeButtons__right">
+            <IconButton data-testid="swipe-button-right" className="swipeButtons__right">
                 <FavoriteIcon fontSize="large" />
             </IconButton>
-            <IconButton className="swipeButtons__lightning">
+            <IconButton data-testid="swipe-button-lightning" className="swipeButtons__lightning">
                 <FlashOnIcon fontSize="large" />
             </IconButton>
         </div>

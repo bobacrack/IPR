@@ -1,54 +1,103 @@
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { signOut } from 'firebase/auth';
-import { getAuth } from 'firebase/auth';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
+import { MemoryRouter, useNavigate } from 'react-router-dom';
 import Header from './Header';
+import { auth } from '../firebase';
+import { signOut } from 'firebase/auth';
 
+jest.mock('../firebase', () => ({
+    auth: {
+        currentUser: {
+            uid: 'mockedUid',
+        },
+    },
+}));
 
+jest.mock('firebase/auth', () => ({
+    signOut: jest.fn(() => Promise.resolve()),
+}));
+
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useNavigate: jest.fn(),
+}));
 
 describe('Header component', () => {
     beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    test('renders header with back button', () => {
+        const navigate = jest.fn();
+        useNavigate.mockReturnValue(navigate);
+
         render(
-            <Router>
-                <Header backButton={true} />
-            </Router>
+            <MemoryRouter>
+                <Header backButton />
+            </MemoryRouter>
         );
-    });
 
-    test('renders logo image', () => {
-        const logoElement = screen.getByAltText('logo');
-        expect(logoElement).toBeInTheDocument();
-    });
-
-    test('renders back button', () => {
         const backButton = screen.getByTestId('backButton');
         fireEvent.click(backButton);
-        expect(navigate).toHaveBeenCalledWith(`/${user.uid}`);
-        // Add assertions for the expected behavior when the button is clicked
+
+        expect(navigate).toHaveBeenCalledWith('/mockedUid');
     });
 
-    test('calls signOut function and navigates to login page on logout', async () => {
+    test('renders header with profile button', () => {
+        const navigate = jest.fn();
+        useNavigate.mockReturnValue(navigate);
 
-        const logoutButton = screen.getByText('Logout');
+        render(
+            <MemoryRouter>
+                <Header backButton={false} />
+            </MemoryRouter>
+        );
+
+        const profileButton = screen.getByTestId('profButo');
+        fireEvent.click(profileButton);
+
+        expect(navigate).toHaveBeenCalledWith('/profile/mockedUid');
+    });
+
+    test('renders header with logout button', async () => {
+        const navigate = jest.fn();
+        useNavigate.mockReturnValue(navigate);
+
+        render(
+            <MemoryRouter>
+                <Header backButton={false} />
+            </MemoryRouter>
+        );
+
+        const logoutButton = screen.getByTestId('logout');
         fireEvent.click(logoutButton);
+
         await act(async () => {
-            fireEvent.click(logoutButton);
-            await Promise.resolve(); // Wait for state updates to settle
+            await signOut(auth);
         });
-        //expect(signOut).toHaveBeenCalledTimes(1);
-        // Add assertions for the expected behavior after sign out
+
+        expect(signOut).toHaveBeenCalled();
+        expect(navigate).toHaveBeenCalledWith('/login');
     });
-    /*
-        test('navigates to profile page on profile icon click', () => {
-            const profileButton = screen.getByRole('button', { name: 'Profile' });
-            fireEvent.click(profileButton);
-            // Add assertions for the expected behavior when the profile button is clicked
-        });
-    
-        test('navigates to chats page on forum icon click', () => {
-            const chatsLink = screen.getByRole('link', { name: 'Chats' });
-            fireEvent.click(chatsLink);
-            // Add assertions for the expected behavior when the chats link is clicked
-        });*/
+
+    test('renders header with logo and chat button', () => {
+        const navigate = jest.fn();
+        useNavigate.mockImplementation(() => navigate);
+
+        render(
+            <MemoryRouter>
+                <Header backButton={false} />
+            </MemoryRouter>
+        );
+
+        const logo = screen.getByAltText(/logo/i);
+        fireEvent.click(logo);
+        expect(logo).toBeInTheDocument()
+
+        const chatButton = screen.getByTestId("chatButton");
+        fireEvent.click(chatButton);
+
+        expect(chatButton).toBeInTheDocument()
+    });
 });

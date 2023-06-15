@@ -13,14 +13,9 @@ import { Button } from 'antd';
 function Header({ backButton }) {
     const navigate = useNavigate();
 
-    const handleLogout = () => {
-        signOut(auth).then(() => {
-            // Sign-out successful.
-            navigate("/login");
-            console.log("Signed out successfully")
-        }).catch((error) => {
-            // An error happened.
-        });
+    const handleLogout = async () => {
+        await signOut(auth)
+        navigate("/login");
     }
 
     const handleProfileClick = () => {
@@ -42,7 +37,7 @@ function Header({ backButton }) {
                     <ArrowBackIosIcon fontSize="large" className="header__icon" />
                 </IconButton>
             ) : (
-                <IconButton onClick={handleProfileClick}>
+                <IconButton data-testid="profButo" onClick={handleProfileClick}>
                     <PersonIcon className='icon' fontSize='large' />
                 </IconButton>
             )}
@@ -57,8 +52,8 @@ function Header({ backButton }) {
                 <Button data-testid="logout" onClick={handleLogout} type="primary" size='large'>
                     Logout
                 </Button>
-                <Link to="/chats">
-                    <IconButton>
+                <Link data-testid="chatButton" to="/chats">
+                    <IconButton >
                         <ForumIcon className='icon' fontSize='large' />
                     </IconButton>
                 </Link>
