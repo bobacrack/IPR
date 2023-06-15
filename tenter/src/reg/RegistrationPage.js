@@ -7,6 +7,7 @@ import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate } from 'react-router-dom';
+import { Slider } from 'antd';
 
 
 const getBase64 = (file) =>
@@ -272,6 +273,8 @@ export default function RegistrationPage() {
                 >
                     <Input type="password" name="password" value={password} onChange={handleInputChange} placeholder="Enter your password" />
                 </Form.Item>
+                <label>Age preference</label>
+                <Slider defaultValue={30} />
 
                 <Upload
                     listType="picture-card"
