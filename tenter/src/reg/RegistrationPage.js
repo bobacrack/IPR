@@ -149,7 +149,7 @@ export default function RegistrationPage() {
     }
 
 
-    async function signUp(e) {
+    async function signUp(e, navigate) {
         e.preventDefault();
         createUserWithEmailAndPassword(auth, email, password)
             .then(async (userCredential) => {
@@ -190,7 +190,7 @@ export default function RegistrationPage() {
             .catch((error) => {
                 console.log(error);
             });
-        navigate('/')
+        navigate("/login")
     };
 
     function fileToString(file) {
@@ -292,7 +292,7 @@ export default function RegistrationPage() {
                 </Modal>
 
                 <Form.Item>
-                    <button onClick={signUp} type="submit">Register</button>
+                    <button onClick={(e) => signUp(e, navigate)} type="submit">Register</button>
                 </Form.Item>
             </Form>
         </div>

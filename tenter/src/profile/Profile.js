@@ -108,18 +108,20 @@ export default function Profile() {
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                const docRef = doc(database, 'tents', String(uid));
-                const docSnapshot = await getDoc(docRef);
+            if (uid) {
+                try {
+                    const docRef = doc(database, 'tents', String(uid));
+                    const docSnapshot = await getDoc(docRef);
 
-                if (docSnapshot.exists()) {
-                    const tentData = docSnapshot.data();
-                    setTent(tentData);
-                } else {
-                    console.log(`No tent document found with uid: ${uid}`);
+                    if (docSnapshot.exists) {
+                        const tentData = docSnapshot.data();
+                        setTent(tentData);
+                    } else {
+                        console.log(`No tent document found with uid: ${uid}`);
+                    }
+                } catch (error) {
+                    console.error('Error fetching tent document:', error);
                 }
-            } catch (error) {
-                console.error('Error fetching tent document:', error);
             }
         };
 
