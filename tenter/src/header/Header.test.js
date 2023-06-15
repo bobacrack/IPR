@@ -24,10 +24,12 @@ describe('Header component', () => {
     test('renders back button', () => {
         const backButton = screen.getByTestId('backButton');
         fireEvent.click(backButton);
+        expect(navigate).toHaveBeenCalledWith(`/${user.uid}`);
         // Add assertions for the expected behavior when the button is clicked
     });
 
     test('calls signOut function and navigates to login page on logout', async () => {
+
         const logoutButton = screen.getByText('Logout');
         fireEvent.click(logoutButton);
         await act(async () => {

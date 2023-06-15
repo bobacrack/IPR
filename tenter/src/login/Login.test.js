@@ -35,11 +35,13 @@ describe('LogIn', () => {
     it('should call signInWithEmailAndPassword and navigate on form submission', async () => {
         const email = 'test@example.com';
         const password = 'password123';
-        const user = { /* mock user object */ };
+        const user = { uid: 'mockUserId' };
         const navigate = jest.fn();
 
         useNavigate.mockReturnValue(navigate);
         signInWithEmailAndPassword.mockResolvedValue({ user });
+
+        auth.currentUser = user; // Set currentUser to the mock user object
 
         render(<LogIn />);
 
@@ -53,10 +55,9 @@ describe('LogIn', () => {
 
         await waitFor(() => {
             expect(signInWithEmailAndPassword).toHaveBeenCalledWith(auth, email, password);
-            expect(navigate).toHaveBeenCalledWith('/');
+            expect(navigate).toHaveBeenCalledWith(`/${user.uid}`);
         });
     });
-
     it('should handle sign-in error', async () => {
         const errorCode = 'auth/invalid-email';
         const errorMessage = 'Invalid email address';

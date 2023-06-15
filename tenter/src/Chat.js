@@ -7,11 +7,11 @@ import "./Chat.css";
 function Chat({ name, receiverInfo, message, profilePic, timestamp }) {
 
     return (
-        <Link to={`/chats/${receiverInfo}`}>
+        <Link role='link' to={`/chats/${receiverInfo}`}>
             <div className="chat">
-                <Avatar className="chat__image" src={profilePic} />
+                <Avatar alt='img' className="chat__image" src={profilePic} />
                 <div className="chat__details">
-                    <h2>{name}</h2>
+                    <h2 role='heading'>{name}</h2>
                     <p>{message}</p>
                 </div>
                 <p className="chat__timestamp">{timestamp}</p>
