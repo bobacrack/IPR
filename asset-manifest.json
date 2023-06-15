@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/IPR/static/css/main.8ca4638a.css",
+    "main.js": "/IPR/static/js/main.dd1192eb.js",
+    "static/js/787.434f6b7a.chunk.js": "/IPR/static/js/787.434f6b7a.chunk.js",
+    "index.html": "/IPR/index.html",
+    "main.8ca4638a.css.map": "/IPR/static/css/main.8ca4638a.css.map",
+    "main.dd1192eb.js.map": "/IPR/static/js/main.dd1192eb.js.map",
+    "787.434f6b7a.chunk.js.map": "/IPR/static/js/787.434f6b7a.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.8ca4638a.css",
+    "static/js/main.dd1192eb.js"
+  ]
+}
