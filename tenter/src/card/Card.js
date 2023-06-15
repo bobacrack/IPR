@@ -138,6 +138,9 @@ export default function Card() {
                     await updateDoc(doc(collection(database, 'likes'), String(uuid)), otherLikes);
                     if (likes.myLikes.includes(String(uuid)) && otherLikes.likedMe.includes(String(uid))) {
                         setShowConfetti(true)
+                        setTimeout(() => {
+                            navigate(`/chats/${receiverInfo}`);
+                        }, 3000);
                     }
                 } else {
                     const collectionRef = collection(database, "likes");
