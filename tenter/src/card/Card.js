@@ -51,7 +51,6 @@ export default function Card() {
         if (currentIndex >= 0 && currentIndex < tents.length) {
             const currentTent = tents[currentIndex];
             const tentUUID = currentTent.uuid;
-            console.log("Current Tent UUID: ", tentUUID);
             setReceiverInfo(tentUUID);
         }
     }, [currentIndex, tents]);
@@ -70,7 +69,6 @@ export default function Card() {
                 } else {
                     const collectionRef = collection(database, 'likes');
                     await setDoc(doc(collectionRef, uid), { likedMe: [], myLikes: [], disliked: [] });
-                    console.log(`added like document with uid: ${uid}`);
                 }
             } catch (error) {
                 console.error('Error fetching tent document:', error);
@@ -99,7 +97,6 @@ export default function Card() {
                 } else {
                     const collectionRef = collection(database, "likes");
                     await setDoc(doc(collectionRef, uid), { likedMe: [], myLikes: [], disliked: [] });
-                    console.log(`added like document with uid: ${uid}`);
                 }
             } catch (error) {
                 console.error('Error fetching tent document:', error);
@@ -118,7 +115,6 @@ export default function Card() {
 
 
     const canGoBack = currentIndex < tents.length - 1
-    console.log("CurrentIndex" + currentIndex);
 
     const canSwipe = currentIndex >= 0
 
@@ -140,14 +136,12 @@ export default function Card() {
                     otherLikes = likeData
                     otherLikes.likedMe.push(uid)
                     await updateDoc(doc(collection(database, 'likes'), String(uuid)), otherLikes);
-                    console.log("Document updated successfully.");
                     if (likes.myLikes.includes(String(uuid)) && otherLikes.likedMe.includes(String(uid))) {
                         setShowConfetti(true)
                     }
                 } else {
                     const collectionRef = collection(database, "likes");
                     await setDoc(doc(collectionRef, uid), { likedMe: [], myLikes: [], disliked: [] });
-                    console.log(`added like document with uid: ${uid}`);
                 }
             } catch (error) {
                 console.error('Error fetching tent document:', error);
@@ -159,7 +153,6 @@ export default function Card() {
     }
 
     const outOfFrame = (dir, name, idx, uuid) => {
-        console.log(`${name} (${idx}) left the screen!`, currentIndexRef.current)
         // handle the case in which go back is pressed before card goes outOfFrame
         currentIndexRef.current >= idx && childRefs[idx].current.restoreCard()
         // TODO: when quickly swipe and restore multiple times the same card,
@@ -169,8 +162,6 @@ export default function Card() {
             likes.myLikes.push(String(uuid))
             updateDoc(doc(collection(database, 'likes'), uid), likes)
             getLickyMaBally(uuid)
-            console.log(likes)
-            console.log(otherLikes)
 
         }
         if (dir === 'left') {

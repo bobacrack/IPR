@@ -23,11 +23,9 @@ async function addDocumentToCollection(documentData, collectionName, customId) {
         const collectionRef = collection(database, collectionName);
         if (customId) {
             await setDoc(doc(collectionRef, customId), documentData);
-            console.log('Document added with custom ID:', customId);
             return customId;
         } else {
             const docRef = await addDoc(collectionRef, documentData);
-            console.log('Document added with auto-generated ID:', docRef.id);
             return docRef.id;
         }
     } catch (error) {
@@ -96,7 +94,6 @@ export default function RegistrationPage() {
         // Simulate file upload process
         setTimeout(() => {
             // Process the uploaded file here (e.g., send it to a server or save it locally)
-            console.log('Uploaded file:', file);
 
             // Update the file list state
             setFileList((prevFileList) => [...prevFileList, file]);
@@ -108,7 +105,6 @@ export default function RegistrationPage() {
             // onError('Upload failed');
         }, 2000);
         fileList.forEach(element => {
-            console.log(element);
         });
     };
 
@@ -130,7 +126,6 @@ export default function RegistrationPage() {
     );
 
     const onFinish = (values) => {
-        console.log(values);
     };
 
     function calculateAge(dateOfBirth) {
@@ -153,7 +148,6 @@ export default function RegistrationPage() {
         e.preventDefault();
         createUserWithEmailAndPassword(auth, email, password)
             .then(async (userCredential) => {
-                console.log(userCredential);
                 var picture = {
                     url: "",
                     name: firstname + " " + lastname,
@@ -162,7 +156,6 @@ export default function RegistrationPage() {
 
                 await fileToString(fileList[0].originFileObj)
                     .then((fileContent) => {
-                        console.log('File content:', fileContent);
                         picture.url = fileContent;
                         // Perform further processing with the file content
                     })

@@ -11,7 +11,6 @@ import { useParams } from 'react-router-dom';
 
 function ChatScreen() {
     const { receiverInfo } = useParams();
-    console.log("ReciverInfo aus URL: " + receiverInfo);
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState([]);
     const [userID, setUserID] = useState(null);
@@ -23,7 +22,6 @@ function ChatScreen() {
             //const q = query(collection(database, 'chats'), where('recevierId', '==', String(userID)));
             //const querySnapshot = await getDoc(q)
             const tempData = querySnapshot.docs.map((doc) => doc.data());
-            console.log(tempData)
             setMessages(tempData.sort((a, b) => a.timestamp - b.timestamp));
         };
 
@@ -31,9 +29,7 @@ function ChatScreen() {
             if (user) {
                 const uid = user.uid;
                 setUserID(uid);
-                console.log("USER", uid);
             } else {
-                console.log("User is logged out");
             }
         });
 
@@ -63,7 +59,6 @@ function ChatScreen() {
         try {
             // Daten in der Firestore Collection "messages" speichern
             const docRef = await addDoc(collection(database, "chats"), newMessage);
-            console.log("Nachricht erfolgreich gesendet:", docRef.id);
         } catch (error) {
             console.error("Fehler beim Senden der Nachricht:", error);
         }
