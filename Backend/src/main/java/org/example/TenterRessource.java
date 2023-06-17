@@ -53,17 +53,6 @@ public class TenterResscource {
         }
     }
 
-    // Endpoint for creating a message entry
-    @RequestMapping(method = RequestMethod.POST, value = "/message-entries", produces = MediaType.APPLICATION_JSON)
-    public MessageEntry createMessageEntry(@RequestBody MessageEntry entry) {
-        if (!mMessageEntries.containsKey(entry.getmId())) {
-            mMessageEntries.put(entry.getmId(), entry);
-            return entry;
-        } else {
-            throw new IllegalArgumentException("id in use " + entry.getmId());
-        }
-    
-    }
 
     // Endpoint for creating a like entry
     @RequestMapping(method = RequestMethod.POST, value = "/like-entries", produces = MediaType.APPLICATION_JSON)
@@ -102,15 +91,6 @@ public class TenterResscource {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/message-entries/{id}", produces = MediaType.APPLICATION_JSON)
-    public MessageEntry getMessageEntry(@PathVariable("id") Integer id) {
-        if (mMessageEntries.containsKey(id)) {
-            return mMessageEntries.get(id);
-        } else {
-            throw new IllegalArgumentException("Invalid message ID: " + id);
-        }
-    }
-
     @RequestMapping(method = RequestMethod.GET, value = "/like-entries/{id}", produces = MediaType.APPLICATION_JSON)
     public LikeEntry getLikeEntry(@PathVariable("id") Integer id) {
         if (mLikeEntries.containsKey(id)) {
@@ -144,17 +124,6 @@ public class TenterResscource {
         }
     }
 
-    @RequestMapping(method = RequestMethod.PUT, value = "/message-entries/{id}", produces = MediaType.APPLICATION_JSON)
-    public MessageEntry updateMessageEntry(@PathVariable("id") Integer id, @RequestBody MessageEntry entry) {
-        if (mMessageEntries.containsKey(id)) {
-            MessageEntry existingEntry = mMessageEntries.get(id);
-            existingEntry.update(entry.getmContent(), entry.getmSenderId(), entry.getmReceiverId());
-            return existingEntry;
-        } else {
-            throw new IllegalArgumentException("Invalid message ID: " + id);
-        }
-    }
-
     @RequestMapping(method = RequestMethod.PUT, value = "/like-entries/{id}", produces = MediaType.APPLICATION_JSON)
     public LikeEntry updateLikeEntry(@PathVariable("id") Integer id, @RequestBody LikeEntry entry) {
         if (mLikeEntries.containsKey(id)) {
@@ -183,15 +152,6 @@ public class TenterResscource {
             mChatEntries.remove(id);
         } else {
             throw new IllegalArgumentException("Invalid chat ID: " + id);
-        }
-    }
-
-    @RequestMapping(method = RequestMethod.DELETE, value = "/message-entries/{id}", produces = MediaType.APPLICATION_JSON)
-    public void deleteMessageEntry(@PathVariable("id") Integer id) {
-        if (mMessageEntries.containsKey(id)) {
-            mMessageEntries.remove(id);
-        } else {
-            throw new IllegalArgumentException("Invalid message ID: " + id);
         }
     }
 
