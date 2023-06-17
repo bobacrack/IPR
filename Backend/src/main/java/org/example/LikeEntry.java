@@ -5,16 +5,24 @@ public class LikeEntry {
     private Integer mUidLiker;
     private Integer mUidLiked;
 
-    public LikeEntry(Intger aId, Integer aUidLiker, Integer aUidLiked) {
+    public Integer getmUidLiker() {
+        return mUidLiker;
+    }
+
+    public Integer getmUidLiked() {
+        return mUidLiked;
+    }
+
+    public LikeEntry(Integer aId, Integer aUidLiker, Integer aUidLiked) {
         mId = aId;
         mUidLiker = aUidLiker;
         mUidLiked = aUidLiked;
     }
 
-    public void update(Integer aUidLiker, Integer aUidLiked) {
+    public void update(Integer aId, Integer aUidLiker, Integer aUidLiked) {
         mUidLiker = aUidLiker;
         mUidLiked = aUidLiked;
-
+        mId = aId;
     }
 
     public Integer getmId() {

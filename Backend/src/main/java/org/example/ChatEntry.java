@@ -1,14 +1,33 @@
 package org.example;
 
+import java.util.Date;
+
 public class ChatEntry {
     private Integer mId;
     private Integer mUidSender;
+
+    public Integer getmUidSender() {
+        return mUidSender;
+    }
+
+    public Integer getmUidReceiver() {
+        return mUidReceiver;
+    }
+
+    public String getmMessage() {
+        return mMessage;
+    }
+
+    public Date getmTimestamp() {
+        return mTimestamp;
+    }
+
     private Integer mUidReceiver;
     private String mMessage;
     private Date mTimestamp;
 
 
-    public ChatEntry(Integer aId, Integer aUidSender, Integer aUidReceiver, , String aMessage) {
+    public ChatEntry(Integer aId, Integer aUidSender, Integer aUidReceiver, String aMessage) {
         mId = aId;
         mUidSender = aUidSender;
         mUidReceiver = aUidReceiver;

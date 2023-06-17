@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,17 +16,15 @@ public class TenterResscource {
 
     private Map<Integer, UserEntry> mUserEntries;
     private Map<Integer, ChatEntry> mChatEntries;
-    private Map<Integer, MessageEntry> mMessageEntries;
     private Map<Integer, LikeEntry> mLikeEntries;
 
     public TenterResscource() {
         mUserEntries = new HashMap<Integer, UserEntry>();
-        mUserEntries.put(1, new UserEntry("John", "Smith", 26, 28, "https://cdn.thewirecutter.com/wp-content/media/2022/07/carfamilycampingtents-2048px-0313-3x2-1.jpg"));
-        mUserEntries.put(2, new UserEntry("Bob", "Smith", 28, 30, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH5bDkLDmjjaQsJ4i4OzVekM8Z1JMZyC7XcQ&usqp=CAU"));
-        mUserEntries.put(3, new UserEntry("Emily", "Davis", 35, 40, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrOvYxBGaN24S-skspJ2U8VYc5vofi-Cdavg&usqp=CAU"));
+        mUserEntries.put(1, new UserEntry(null,"John", "Smith", new Date(), 28, "https://cdn.thewirecutter.com/wp-content/media/2022/07/carfamilycampingtents-2048px-0313-3x2-1.jpg"));
+        mUserEntries.put(2, new UserEntry(null,"Bob", "Smith", new Date(), 23, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH5bDkLDmjjaQsJ4i4OzVekM8Z1JMZyC7XcQ&usqp=CAU"));
+        mUserEntries.put(3, new UserEntry(null, "Emily", "Davis", new Date(), 35, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrOvYxBGaN24S-skspJ2U8VYc5vofi-Cdavg&usqp=CAU"));
 
         mChatEntries = new HashMap<Integer, ChatEntry>();
-        mMessageEntries = new HashMap<Integer, MessageEntry>();
         mLikeEntries = new HashMap<Integer, LikeEntry>();
     }
 
@@ -75,10 +74,10 @@ public class TenterResscource {
     @RequestMapping(method = RequestMethod.GET, value = "/user-entries/{id}", produces = MediaType.APPLICATION_JSON)
     public UserEntry readNote(@PathVariable("id") Integer aId) {
         // Implement the logic to retrieve the UserEntry with the given ID
-        if (mUserEntries.containsKey(id)) {
-            return mUserEntries.get(id);
+        if (mUserEntries.containsKey(aId)) {
+            return mUserEntries.get(aId);
         } else {
-            throw new IllegalArgumentException("Invalid user ID: " + id);
+            throw new IllegalArgumentException("Invalid user ID: " + aId);
         }
     }
 
@@ -117,7 +116,7 @@ public class TenterResscource {
     public ChatEntry updateChatEntry(@PathVariable("id") Integer id, @RequestBody ChatEntry entry) {
         if (mChatEntries.containsKey(id)) {
             ChatEntry existingEntry = mChatEntries.get(id);
-            existingEntry.update(entry.getmUidSender(), entry.getmUidReceiver());
+            existingEntry.update(entry.getmUidSender(), entry.getmUidReceiver(), entry.getmMessage());
             return existingEntry;
         } else {
             throw new IllegalArgumentException("Invalid chat ID: " + id);
@@ -128,7 +127,7 @@ public class TenterResscource {
     public LikeEntry updateLikeEntry(@PathVariable("id") Integer id, @RequestBody LikeEntry entry) {
         if (mLikeEntries.containsKey(id)) {
             LikeEntry existingEntry = mLikeEntries.get(id);
-            existingEntry.update(entry.getmUserId(), entry.getmLikedEntryId(), entry.getmLikedEntryType());
+            existingEntry.update(entry.getmId(), entry.getmUidLiker(), entry.getmUidLiked());
             return existingEntry;
         } else {
             throw new IllegalArgumentException("Invalid like ID: " + id);

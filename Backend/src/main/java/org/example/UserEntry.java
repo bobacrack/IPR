@@ -1,5 +1,6 @@
 package org.example;
 
+import java.util.Date;
 import java.util.UUID;
 
 public class UserEntry {
@@ -7,14 +8,34 @@ public class UserEntry {
     private String mUid;
     private String mFname;
     private String mLname;
-    private Timestamp mAge;
+    private Date mAge;
     private Integer mAgePref;
     private String mPicture;
+
+    public String getmFname() {
+        return mFname;
+    }
+
+    public String getmLname() {
+        return mLname;
+    }
+
+    public Date getmAge() {
+        return mAge;
+    }
+
+    public Integer getmAgePref() {
+        return mAgePref;
+    }
+
+    public String getmPicture() {
+        return mPicture;
+    }
 
     UUID uuid = UUID.randomUUID();
     String uniqueId = uuid.toString();
 
-    public UserEntry(Integer aId, String aFname, String aLname, Timestamp aAge, Integer aAgePref, String aPicture) {
+    public UserEntry(Integer aId, String aFname, String aLname, Date aAge, Integer aAgePref, String aPicture) {
         mId = aId;
         mUid = uniqueId;
         mFname = aFname;
@@ -24,7 +45,7 @@ public class UserEntry {
         mPicture = aPicture;
     }
 
-    public void update(String aFname, String aLname, Timestamp aAge, Integer aAgePref, String aPicture) {
+    public void update(String aFname, String aLname, Date aAge, Integer aAgePref, String aPicture) {
         mFname = aFname;
         mLname = aLname;
         mAge = aAge;
