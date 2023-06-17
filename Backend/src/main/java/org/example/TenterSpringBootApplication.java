@@ -6,9 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+@SpringBootApplication
 public class TenterSpringBootApplication {
     public static void main(String[] args) {
-        String url = "jdbc:postgresql://localhost:64000/tenter";
+        String url = "jdbc:postgresql://217.160.215.31:64000/tenter?sslmode=disable";
         String username = "tenter";
         String password = "tenter";
 
@@ -18,7 +19,6 @@ public class TenterSpringBootApplication {
             connector.connect();
 
             // Use the connection to perform database operations
-            Class.forName("org.postgresql.Driver");
             Connection connection = connector.getConnection();
             // Execute queries, insert/update/delete data, etc.
 
