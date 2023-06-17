@@ -2,15 +2,14 @@ package org.example;
 
 public class ChatEntry {
     private Integer mId;
-    private String mUidSender;
-    private String mUidReceiver;
+    private Integer mUidSender;
+    private Integer mUidReceiver;
     private String mMessage;
     private Date mTimestamp;
 
-    private static int sNextId = 1;
 
-    public ChatEntry(String aUidSender, String aUidReceiver, , String aMessage) {
-        mId = sNextId++;
+    public ChatEntry(Integer aId, Integer aUidSender, Integer aUidReceiver, , String aMessage) {
+        mId = aId;
         mUidSender = aUidSender;
         mUidReceiver = aUidReceiver;
         mMessage = aMessage;
@@ -19,7 +18,7 @@ public class ChatEntry {
 
     }
 
-    public void update(String aUidSender, String aUidReceiver, String aMessage) {
+    public void update(Integer aUidSender, Integer aUidReceiver, String aMessage) {
         mUidSender = aUidSender;
         mUidReceiver = aUidReceiver;
         mMessage = aMessage;

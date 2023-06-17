@@ -7,26 +7,24 @@ public class UserEntry {
     private String mUid;
     private String mFname;
     private String mLname;
-    private Integer mAge;
+    private Timestamp mAge;
     private Integer mAgePref;
     private String mPicture;
 
-    private static int sNextId = 1;
     UUID uuid = UUID.randomUUID();
     String uniqueId = uuid.toString();
 
-    public UserEntry(String aFname, String aLname, Integer aAge, Integer aAgePref, String aPicture) {
-        mId = sNextId++;
+    public UserEntry(Integer aId, String aFname, String aLname, Timestamp aAge, Integer aAgePref, String aPicture) {
+        mId = aId;
         mUid = uniqueId;
         mFname = aFname;
         mLname = aLname;
         mAge = aAge;
         mAgePref = aAgePref;
         mPicture = aPicture;
-
     }
 
-    public void update(String aFname, String aLname, Integer aAge, Integer aAgePref, String aPicture) {
+    public void update(String aFname, String aLname, Timestamp aAge, Integer aAgePref, String aPicture) {
         mFname = aFname;
         mLname = aLname;
         mAge = aAge;
