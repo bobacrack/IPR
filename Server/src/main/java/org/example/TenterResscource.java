@@ -20,9 +20,9 @@ public class TenterResscource {
 
     public TenterResscource() {
         mUserEntries = new HashMap<Integer, UserEntry>();
-        mUserEntries.put(1, new UserEntry(null,"John", "Smith", new Date(), 28, "https://cdn.thewirecutter.com/wp-content/media/2022/07/carfamilycampingtents-2048px-0313-3x2-1.jpg"));
-        mUserEntries.put(2, new UserEntry(null,"Bob", "Smith", new Date(), 23, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH5bDkLDmjjaQsJ4i4OzVekM8Z1JMZyC7XcQ&usqp=CAU"));
-        mUserEntries.put(3, new UserEntry(null, "Emily", "Davis", new Date(), 35, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrOvYxBGaN24S-skspJ2U8VYc5vofi-Cdavg&usqp=CAU"));
+        mUserEntries.put(1, new UserEntry(1,"John", "Smith", new Date(), 28, "https://cdn.thewirecutter.com/wp-content/media/2022/07/carfamilycampingtents-2048px-0313-3x2-1.jpg"));
+        mUserEntries.put(2, new UserEntry(2,"Bob", "Smith", new Date(), 23, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH5bDkLDmjjaQsJ4i4OzVekM8Z1JMZyC7XcQ&usqp=CAU"));
+        mUserEntries.put(3, new UserEntry(3, "Emily", "Davis", new Date(), 35, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrOvYxBGaN24S-skspJ2U8VYc5vofi-Cdavg&usqp=CAU"));
 
         mChatEntries = new HashMap<Integer, ChatEntry>();
         mLikeEntries = new HashMap<Integer, LikeEntry>();
@@ -99,6 +99,11 @@ public class TenterResscource {
         }
     }
 
+    @RequestMapping(method = RequestMethod.GET, value="/entries", produces = MediaType.APPLICATION_JSON)
+    public Map<Integer, UserEntry> readNotes() {
+        return mUserEntries;
+    }
+
     //PUT------------------------------------------------------------------------------------------------------------------------------
 
     @RequestMapping(method = RequestMethod.PUT, value = "/user-entries/{id}", produces = MediaType.APPLICATION_JSON)
@@ -111,6 +116,8 @@ public class TenterResscource {
             throw new IllegalArgumentException("Invalid user ID: " + id);
         }
     }
+
+
 
     @RequestMapping(method = RequestMethod.PUT, value = "/chat-entries/{id}", produces = MediaType.APPLICATION_JSON)
     public ChatEntry updateChatEntry(@PathVariable("id") Integer id, @RequestBody ChatEntry entry) {
