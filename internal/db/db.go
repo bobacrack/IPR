@@ -40,7 +40,7 @@ func PostConnection() {
 
 func migrate() {
 	err := database.AutoMigrate(
-		&structs.User{},
+		&structs.Nutzer{},
 	)
 	if err != nil {
 		log.Panicf("cant migrate: %s", err.Error())

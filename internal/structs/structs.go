@@ -1,8 +1,12 @@
 package structs
 
-type User struct {
+import (
+	"time"
+)
+
+type Nutzer struct {
 	ID        int
-	UID       int
+	UID       string
 	Firstname string
 	Lastname  string
 	Age       *time.Time
