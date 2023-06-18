@@ -22,7 +22,21 @@ func NewServer(port int) Server {
 }
 
 func (s Server) Start() {
-	s.router.Handle("/api/v1/user", tenter.NewFindUserHandler()).Methods(http.MethodGet)
+	//user
+	s.router.Handle("/api/v1/user", tenter.NewFindAllUserHandler()).Methods(http.MethodGet)
+	s.router.Handle("/api/v1/user/{id}", tenter.NewFindUserHandler()).Methods(http.MethodGet)
+	s.router.Handle("/api/v1/user", tenter.NewUserHandler()).Methods(http.MethodPost)
+	s.router.Handle("/api/v1/user", tenter.NewUpdateUserHandler()).Methods(http.MethodPut)
+	s.router.Handle("/api/v1/user", tenter.NewFindUserHandler()).Methods(http.MethodDelete)
+
+	//likes
+	s.router.Handle("/api/v1/likes", tenter.NewFindUserHandler()).Methods(http.MethodGet)
+	s.router.Handle("/api/v1/likes", tenter.NewFindUserHandler()).Methods(http.MethodPost)
+	s.router.Handle("/api/v1/likes", tenter.NewFindUserHandler()).Methods(http.MethodDelete)
+
+	//chats
+	s.router.Handle("/api/v1/likes", tenter.NewFindUserHandler()).Methods(http.MethodPost)
+	s.router.Handle("/api/v1/likes", tenter.NewFindUserHandler()).Methods(http.MethodDelete)
 
 	srv := http.Server{
 		WriteTimeout: 4 * time.Minute,

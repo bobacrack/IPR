@@ -1,24 +1,20 @@
 package structs
 
-import (
-	"time"
-)
-
 type Nutzer struct {
-	ID        int
-	UID       string
-	Firstname string
-	Lastname  string
-	Age       *time.Time
-	AgePref   int
-	Picture   string
+	ID        int    `gorm:"primaryKey" json:"id"`
+	UID       string `gorm:"uid" json:"uid"`
+	Firstname string `gorm:"firstname" json:"firstname"`
+	Lastname  string `gorm:"lastname" json:"lastname"`
+	Age       int    `gorm:"age" json:"age"`
+	Agepref   int    `gorm:"agepref" json:"agepref"`
+	Picture   string `gorm:"picture" json:"picture"`
 }
 type Chat struct {
 	ID          int
 	UIDSender   int
 	UIDReceiver int
 	Message     string
-	Timestamp   *time.Time
+	Timestamp   int
 }
 type Like struct {
 	ID       int
