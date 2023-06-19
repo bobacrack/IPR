@@ -11,7 +11,7 @@ export const fetchUsers = (onCompleteCallback) => {
             if (!response.ok) {
                 throw new Error('Error fetching users');
             }
-            return response; // Read the response body as text
+            return response.json(); // Read the response body as text
         })
         .then((body) => {
 
