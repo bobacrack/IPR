@@ -19,7 +19,7 @@ import { fetchUsers } from './fetchUsers';
 
 export default function Card() {
     const { uid } = useParams();
-    const [tents, setTents] = useState([]);
+    const [usersData, setusersData] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [lastDirection, setLastDirection] = useState();
     const [receiverInfo, setReceiverInfo] = useState('');
@@ -30,15 +30,15 @@ export default function Card() {
     const { width, height } = useWindowSize()
     const navigate = useNavigate();
     const [showConfetti, setShowConfetti] = useState(false);
-    const [usersData, setUsersData] = useState([]);
+
 
     //Test
     const childRefs = useMemo(
         () =>
-            Array(tents.length)
+            Array(usersData.length)
                 .fill(0)
                 .map((i) => React.createRef()),
-        [tents.length]
+        [usersData.length]
     );
 
 
@@ -50,19 +50,19 @@ export default function Card() {
     };
     */
     useEffect(() => {
-        if (currentIndex >= 0 && currentIndex < tents.length) {
-            const currentTent = tents[currentIndex];
-            const tentUUID = currentTent.uuid;
-            setReceiverInfo(tentUUID);
+        if (currentIndex >= 0 && currentIndex < usersData.length) {
+            const currentuser = usersData[currentIndex];
+            const userUUID = currentuser.uuid;
+            setReceiverInfo(userUUID);
         }
-    }, [currentIndex, tents]);
+    }, [currentIndex, usersData]);
 
     useEffect(() => {
         fetchUsers((data, error) => {
             if (data) {
                 // Save the fetched users in the usersData state
                 //console.log("DATA Result: ", data);
-                setUsersData(data);
+                setusersData(data);
                 //console.log(usersData);
             } else {
                 console.error(error);
@@ -86,14 +86,14 @@ export default function Card() {
                     await setDoc(doc(collectionRef, uid), { likedMe: [], myLikes: [], disliked: [] });
                 }
             } catch (error) {
-                console.error('Error fetching tent document:', error);
+                console.error('Error fetching user document:', error);
             }
 
-            const q = query(collection(database, 'tents'), where('uuid', 'not-in', dislikes));
+            const q = query(collection(database, 'usersData'), where('uuid', 'not-in', dislikes));
             const querySnapshot = await getDocs(q);
-            const tentData = querySnapshot.docs.map((doc) => doc.data());
-            setTents(tentData);
-            setCurrentIndex(tentData.length - 1);
+            const userData = querySnapshot.docs.map((doc) => doc.data());
+            setusersData(userData);
+            setCurrentIndex(userData.length - 1);
         };
 
         fetchData();
@@ -114,7 +114,7 @@ export default function Card() {
                     await setDoc(doc(collectionRef, uid), { likedMe: [], myLikes: [], disliked: [] });
                 }
             } catch (error) {
-                console.error('Error fetching tent document:', error);
+                console.error('Error fetching user document:', error);
             }
         };
 
@@ -129,7 +129,7 @@ export default function Card() {
     }
 
 
-    const canGoBack = currentIndex < tents.length - 1
+    const canGoBack = currentIndex < usersData.length - 1
 
     const canSwipe = currentIndex >= 0
 
@@ -162,7 +162,7 @@ export default function Card() {
                     await setDoc(doc(collectionRef, uid), { likedMe: [], myLikes: [], disliked: [] });
                 }
             } catch (error) {
-                console.error('Error fetching tent document:', error);
+                console.error('Error fetching user document:', error);
             }
         };
 
@@ -190,7 +190,7 @@ export default function Card() {
     }
 
     const swipe = async (dir) => {
-        if (canSwipe && currentIndex < tents.length) {
+        if (canSwipe && currentIndex < usersData.length) {
             await childRefs[currentIndex].current.swipe(dir) // Swipe the card!
         }
     }
@@ -217,19 +217,19 @@ export default function Card() {
             }
 
             <div className='tinderCardsCOntainer'>
-                {tents.map((tent, index) => (
+                {usersData.map((user, index) => (
                     <TinderCard
                         ref={childRefs[index]}
                         className='swipe'
-                        key={tent.name}
-                        onSwipe={(dir) => swiped(dir, tent.name, index)}
-                        onCardLeftScreen={(dir) => outOfFrame(dir, tent.name, index, tent.uuid)}
+                        key={user.id}
+                        onSwipe={(dir) => swiped(dir, user.firstname + " " + user.lastname, index)}
+                        onCardLeftScreen={(dir) => outOfFrame(dir, user.firstname + " " + user.lastname, index, user.uid)}
                     >
                         <div
-                            style={{ backgroundImage: 'url(' + tent.url + ')' }}
+                            style={{ backgroundImage: 'url(' + user.picture + ')' }}
                             className='card'
                         >
-                            <h1>{tent.name}  ({ })</h1>
+                            <h1>{user.firstname + " " + user.lastname}  ({ })</h1>
                         </div>
                     </TinderCard>
                 ))}
