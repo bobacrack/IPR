@@ -1,0 +1,23 @@
+// fetchUsers.js
+
+export const fetchUsers = (onCompleteCallback) => {
+    const url = '/api/v1/user'; // Adjust the URL according to your API endpoint
+
+    fetch(url)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Error fetching users');
+            }
+            return response; // Read the response body as text
+        })
+        .then((body) => {
+
+            const data = body; // Attempt to parse the response body as JSON
+            onCompleteCallback(data, null);
+        })
+        .catch((error) => {
+            onCompleteCallback(null, error.message);
+        });
+
+
+};

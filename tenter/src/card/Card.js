@@ -15,6 +15,7 @@ import FlashOnIcon from '@material-ui/icons/FlashOn';
 import IconButton from '@material-ui/core/IconButton';
 
 import '../SwipeButtons.css';
+import { fetchUsers } from './fetchUsers';
 
 export default function Card() {
     const { uid } = useParams();
@@ -28,6 +29,8 @@ export default function Card() {
     var [otherLikes, setOtherLikes] = useState({ disliked: [], likedMe: [], myLikes: [] })
     const { width, height } = useWindowSize()
     const navigate = useNavigate();
+    const [showConfetti, setShowConfetti] = useState(false);
+    const [usersData, setUsersData] = useState([]);
 
     //Test
     const childRefs = useMemo(
@@ -38,15 +41,14 @@ export default function Card() {
         [tents.length]
     );
 
-    const [showConfetti, setShowConfetti] = useState(false);
 
-
+    /*    
     const getFieldFromSnapshot = (docSnapshot, fieldName) => {
         const data = docSnapshot.data();
         const fieldValue = data ? data[fieldName] : undefined;
         return fieldValue;
     };
-
+    */
     useEffect(() => {
         if (currentIndex >= 0 && currentIndex < tents.length) {
             const currentTent = tents[currentIndex];
@@ -55,6 +57,19 @@ export default function Card() {
         }
     }, [currentIndex, tents]);
 
+    useEffect(() => {
+        fetchUsers((data, error) => {
+            if (data) {
+                // Save the fetched users in the usersData state
+                //console.log("DATA Result: ", data);
+                setUsersData(data);
+                //console.log(usersData);
+            } else {
+                console.error(error);
+            }
+        });
+    }, []);
+    /*
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -107,7 +122,7 @@ export default function Card() {
 
     }, [uid]);
 
-
+    */
     const updateCurrentIndex = (val) => {
         setCurrentIndex(val)
         currentIndexRef.current = val
