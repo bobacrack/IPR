@@ -8,6 +8,26 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+type DeleteUserHandler struct {
+	repository Repository
+}
+
+func NewDeleteUserHandler() DeleteUserHandler {
+	return DeleteUserHandler{repository: GetRepository()}
+}
+
+func (h DeleteUserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	var user structs.Nutzer
+	userID := util.FromRequestBody(r, &user)
+	log.Errorf("id : %s", userID)
+	err := h.repository.DeleteUser(user.ID)
+	if err != nil {
+		log.Errorf("cannot delete user: %v", err)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+}
+
 type FindAllUserHandler struct {
 	repository Repository
 }
@@ -56,7 +76,6 @@ func NewUserHandler() UserHandler {
 func (h UserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var user structs.Nutzer
 	err := util.FromRequestBody(r, &user)
-	log.Errorf("name: %s", user.Firstname)
 	err = h.repository.NewUser(user)
 
 	if err != nil {
@@ -84,4 +103,99 @@ func (h UpdateUserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	util.WriteJsonWithStatus(w, user, http.StatusOK)
+}
+
+type FindLikesHandler struct {
+	repository Repository
+}
+
+func NewFindLikesHandler() FindLikesHandler {
+	return FindLikesHandler{repository: GetRepository()}
+}
+
+func (h FindLikesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	likes, err := h.repository.FindLikes()
+	if err != nil {
+		log.Errorf("ccannot find likes: %v", err)
+		return
+	}
+	util.WriteJsonWithStatus(w, likes, http.StatusOK)
+}
+
+type LikeHandler struct {
+	repository Repository
+}
+
+func NewLikeHandler() LikeHandler {
+	return LikeHandler{repository: GetRepository()}
+}
+
+func (h LikeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	var like structs.Like
+	err := util.FromRequestBody(r, &like)
+	err = h.repository.NewLike(like)
+
+	if err != nil {
+		log.Errorf("cant add like: %v", err.Error())
+		return
+	}
+	util.WriteJsonWithStatus(w, like, http.StatusOK)
+
+}
+
+type DeleteLikeHandler struct {
+	repository Repository
+}
+
+func NewDeleteLikeHandler() DeleteLikeHandler {
+	return DeleteLikeHandler{repository: GetRepository()}
+}
+
+func (h DeleteLikeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	var like structs.Like
+	err := util.FromRequestBody(r, &like)
+	err = h.repository.DeleteLike(like)
+	if err != nil {
+		log.Errorf("cant delete like: %v", err.Error())
+		return
+	}
+	util.WriteJsonWithStatus(w, like, http.StatusOK)
+}
+
+type DislikeHandler struct {
+	repository Repository
+}
+
+func NewDislikeHandler() DislikeHandler {
+	return DislikeHandler{repository: GetRepository()}
+}
+
+func (h DislikeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	var like structs.Dislike
+	err := util.FromRequestBody(r, &like)
+	err = h.repository.NewDislike(like)
+	if err != nil {
+		log.Errorf("cant delete like: %v", err.Error())
+		return
+	}
+	util.WriteJsonWithStatus(w, like, http.StatusOK)
+}
+
+type ChatHandler struct {
+	repository Repository
+}
+
+func NewChatHandler() ChatHandler {
+	return ChatHandler{repository: GetRepository()}
+}
+
+func (h ChatHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	var chat structs.Chat
+	err := util.FromRequestBody(r, &chat)
+	err = h.repository.NewChat(chat)
+	if err != nil {
+		log.Errorf("cant add chat: %v", err.Error())
+		return
+	}
+	util.WriteJsonWithStatus(w, chat, http.StatusOK)
 }

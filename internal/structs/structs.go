@@ -21,3 +21,8 @@ type Like struct {
 	UIDLiker int
 	UIDLiked int
 }
+type Dislike struct {
+	ID          int
+	UIDDisliker string
+	UIDDisliked string
+}

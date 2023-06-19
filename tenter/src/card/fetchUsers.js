@@ -1,7 +1,7 @@
 // fetchUsers.js
 
 export const fetchUsers = (onCompleteCallback) => {
-    const url = '/api/v1/user'; // Adjust the URL according to your API endpoint
+    const url = 'http://localhost:6969/api/v1/user'; // Adjust the URL according to your API endpoint
 
     fetch(url)
         .then((response) => {
