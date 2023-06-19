@@ -24,6 +24,7 @@ type Repository interface {
 	DeleteLike(like structs.Like) (err error)
 	NewDislike(like structs.Dislike) (err error)
 	NewChat(chat structs.Chat) (err error)
+	DeleteRequest(chat structs.Chat) (err error)
 }
 
 func GetRepository() Repository {
@@ -84,5 +85,10 @@ func (r *repository) NewDislike(like structs.Dislike) (err error) {
 
 func (r *repository) NewChat(chat structs.Chat) (err error) {
 	err = r.db.Table("chat").Save(&chat).Error
+	return
+}
+
+func (r *repository) DeleteRequest(chat structs.Chat) (err error) {
+	err = r.db.Table("chat").Where("uidsender = ?", chat.UIDSender).Where("uireceiver = ?", chat.UIDReceiver).Where("uidsender = ?", chat.UIDReceiver).Where("uireceiver = ?", chat.UIDSender).Delete(&chat).Error
 	return
 }
