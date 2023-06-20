@@ -199,3 +199,22 @@ func (h ChatHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	util.WriteJsonWithStatus(w, chat, http.StatusOK)
 }
+
+type DeleteChatHandler struct {
+	repository Repository
+}
+
+func NewDeleteChatHandler() DeleteChatHandler {
+	return DeleteChatHandler{repository: GetRepository()}
+}
+
+func (h DeleteChatHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	var chat structs.Chat
+	err := util.FromRequestBody(r, &chat)
+	err = h.repository.DeleteRequest(chat)
+	if err != nil {
+		log.Errorf("cant delete chat: %v", err.Error())
+		return
+	}
+	util.WriteJsonWithStatus(w, chat, http.StatusOK)
+}

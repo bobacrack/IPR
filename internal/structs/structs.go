@@ -23,6 +23,6 @@ type Like struct {
 }
 type Dislike struct {
 	ID          int
-	UIDDisliker string
-	UIDDisliked string
+	UIDDisliker int
+	UIDDisliked int
 }
