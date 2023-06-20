@@ -1,5 +1,7 @@
 package structs
 
+import "time"
+
 type Nutzer struct {
 	ID        int    `gorm:"primaryKey" json:"id"`
 	UID       string `gorm:"uid" json:"uid"`
@@ -10,11 +12,11 @@ type Nutzer struct {
 	Picture   string `gorm:"picture" json:"picture"`
 }
 type Chat struct {
-	ID          int
-	UIDSender   int
-	UIDReceiver int
-	Message     string
-	Timestamp   int
+	ID          int        `gorm:"primaryKey" json:"id"`
+	UIDSender   int        `gorm:"uidsender" json:"uidsender"`
+	UIDReceiver int        `gorm:"uidreceiver" json:"uidreceiver"`
+	Message     string     `gorm:"message" json:"message"`
+	Time        *time.Time `gorm:"time" json:"timestamp"`
 }
 type Like struct {
 	ID       int

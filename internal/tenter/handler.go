@@ -4,6 +4,7 @@ import (
 	"ipr/structs"
 	"ipr/util"
 	"net/http"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -192,6 +193,8 @@ func NewChatHandler() ChatHandler {
 func (h ChatHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var chat structs.Chat
 	err := util.FromRequestBody(r, &chat)
+	var now = time.Now()
+	chat.Time = &now
 	err = h.repository.NewChat(chat)
 	if err != nil {
 		log.Errorf("cant add chat: %v", err.Error())
