@@ -61,7 +61,7 @@ export default function Card() {
         fetchUsers((data, error) => {
             if (data) {
                 // Save the fetched users in the usersData state
-                //console.log("DATA Result: ", data);
+                console.log("DATA Result: ", data);
                 setusersData(data);
                 //console.log(usersData);
             } else {
