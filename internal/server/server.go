@@ -44,6 +44,7 @@ func (s Server) Start() {
 	s.router.Handle("/api/v1/dislike", tenter.NewDislikeHandler()).Methods(http.MethodPost)
 
 	//chats
+	s.router.Handle("/api/v1/chat", tenter.NewGetChatHandler()).Methods(http.MethodGet)
 	s.router.Handle("/api/v1/chat", tenter.NewChatHandler()).Methods(http.MethodPost)
 	s.router.Handle("/api/v1/likes", tenter.NewDeleteChatHandler()).Methods(http.MethodDelete)
 

@@ -92,3 +92,8 @@ func (r *repository) DeleteRequest(chat structs.Chat) (err error) {
 	err = r.db.Table("chat").Where("uidsender = ?", chat.UIDSender).Where("uireceiver = ?", chat.UIDReceiver).Where("uidsender = ?", chat.UIDReceiver).Where("uireceiver = ?", chat.UIDSender).Delete(&chat).Error
 	return
 }
+
+func (r *repository) GetChats() (chats []structs.Chat, err error) {
+	err = r.db.Table("chat").Find(&chats).Error
+	return
+}

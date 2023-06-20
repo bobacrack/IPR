@@ -182,6 +182,23 @@ func (h DislikeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	util.WriteJsonWithStatus(w, like, http.StatusOK)
 }
 
+type GetChatHandler struct {
+	repository Repository
+}
+
+func NewGetChatHandler() GetChatHandler {
+	return GetChatHandler{repository: GetRepository()}
+}
+
+func (h GetChatHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	chats, err := h.repository.GetChats()
+	if err != nil {
+		log.Errorf("cant retrieve chats: %v", err.Error())
+		return
+	}
+	util.WriteJsonWithStatus(w, chats, http.StatusOK)
+}
+
 type ChatHandler struct {
 	repository Repository
 }
