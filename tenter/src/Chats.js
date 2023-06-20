@@ -1,33 +1,34 @@
 import React, { useEffect, useState } from 'react'
 import './Chats.css';
 import Chat from "./Chat";
-import { database } from './firebase';
-import { collection, getDocs } from "firebase/firestore";
+import { fetchUsers } from './card/fetchUsers';
 
 function Chats() {
 
-    const [tents, setTents] = useState([]);
+    const [usersData, setusersData] = useState([]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            const querySnapshot = await getDocs(collection(database, "tents"));
-            const tentData = querySnapshot.docs.map((doc) => doc.data());
-            setTents(tentData);
-        };
-
-        fetchData();
-
+        fetchUsers((data, error) => {
+            if (data) {
+                // Save the fetched users in the usersData state
+                //console.log("DATA Result: ", data);
+                setusersData(data);
+                //console.log(usersData);
+            } else {
+                console.error(error);
+            }
+        });
     }, []);
     return (
         <div className="chats">
-            {tents.map((tent, index) => (
+            {usersData.map((user, index) => (
                 <Chat
-                    key={index}
-                    name={tent.name}
-                    receiverInfo={tent.uuid}
+                    key={user.id}
+                    name={user.firstname + " " + user.lastname}
+                    receiverInfo={user.uid}
                     message="Yo whats up!"
                     timestamp="40 seconds ago"
-                    profilePic={tent.url}
+                    profilePic={user.picture}
                 />
             ))}
         </div>

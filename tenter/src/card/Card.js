@@ -229,7 +229,7 @@ export default function Card() {
                             style={{ backgroundImage: 'url(' + user.picture + ')' }}
                             className='card'
                         >
-                            <h1>{user.firstname + " " + user.lastname}  ({ })</h1>
+                            <h1>{user.firstname + " " + user.lastname}  ({user.age})</h1>
                         </div>
                     </TinderCard>
                 ))}
