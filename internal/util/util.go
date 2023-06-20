@@ -6,10 +6,8 @@ import (
 	"html"
 	"io/ioutil"
 	"net/http"
-	"reflect"
 
 	"github.com/gorilla/mux"
-	log "github.com/sirupsen/logrus"
 )
 
 func WriteJsonWithStatus(w http.ResponseWriter, v interface{}, statusCode int) {
@@ -37,14 +35,11 @@ func (p *parser) VarValue(r *http.Request, key string) string {
 func FromRequestBody(r *http.Request, v interface{}) error {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Errorf("cannot read body: %s", err.Error())
 		return errors.New(html.EscapeString(err.Error()))
 	}
 
 	err = json.Unmarshal(body, &v)
 	if err != nil {
-		resultType := reflect.TypeOf(v)
-		log.Errorf("cannot unmarshal payload to type %v: %v --payload: %v", resultType, err.Error(), string(body))
 		return errors.New("invalid json body: " + html.EscapeString(err.Error()))
 	}
 	return nil
