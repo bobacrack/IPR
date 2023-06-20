@@ -25,6 +25,7 @@ type Repository interface {
 	NewDislike(like structs.Dislike) (err error)
 	NewChat(chat structs.Chat) (err error)
 	DeleteRequest(chat structs.Chat) (err error)
+	GetChats() (chats []structs.Chat, err error)
 }
 
 func GetRepository() Repository {
