@@ -4,14 +4,16 @@ import Chat from "./Chat";
 import { fetchUsers } from './card/fetchUsers';
 import { fetchChats } from './card/fetchChats';
 import { auth } from "./firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 function Chats() {
 
     const [usersData, setusersData] = useState([]);
 
     const [chatsData, setchatsData] = useState([]);
+    const [userID, setUserID] = useState(null);
 
-    const uidOfCurrentUser = auth.currentUser.uid
+
     useEffect(() => {
         fetchUsers((data, error) => {
             if (data) {
@@ -33,12 +35,24 @@ function Chats() {
                 console.error(error);
             }
         });
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const uid = user.uid;
+                setUserID(uid);
+            } else {
+            }
+        });
+
+        return () => {
+            unsubscribe();
+        }
     }, []);
-    console.log("UID CURRETN USER: " + uidOfCurrentUser);
-    const matchingUser = usersData.find(user => user.uid === uidOfCurrentUser);
-    console.log("MATCHING USER: " + matchingUser);
-    const matchingUserId = matchingUser ? matchingUser.id : null;
-    console.log("MATCHING ID: " + matchingUserId);
+    function findMatchingId(userID, usersData) {
+        const matchingUser = usersData.find(user => user.uid === userID);
+        return matchingUser ? matchingUser.id : null;
+    }
+    const matchingUserId = findMatchingId(userID, usersData);
+
 
     const currentUserChats = chatsData.filter(chat => {
         const senderID = parseInt(chat.uidsender);
