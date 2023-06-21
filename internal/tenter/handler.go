@@ -10,6 +10,25 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+type HolenHandler struct {
+	repository    Repository
+	requestParser util.RequestParser
+}
+
+func NewHolenHandler() HolenHandler {
+	return HolenHandler{repository: GetRepository(), requestParser: util.NewRequestParser()}
+}
+
+func (h HolenHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	var id = h.requestParser.VarValue(r, "id")
+	tents, err := h.repository.Holen(id)
+	if err != nil {
+		log.Errorf("cant get user: %v", err)
+		return
+	}
+	util.WriteJsonWithStatus(w, tents, http.StatusOK)
+}
+
 type DeleteUserHandler struct {
 	repository    Repository
 	requestParser util.RequestParser

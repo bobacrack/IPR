@@ -27,6 +27,7 @@ type Repository interface {
 	DeleteRequest(chat structs.Chat) (err error)
 	GetChats() (chats []structs.Chat, err error)
 	GetDislikes() (dislikes []structs.Dislike, err error)
+	Holen(id string) (tents []structs.Nutzer, err error)
 }
 
 func GetRepository() Repository {
@@ -34,6 +35,11 @@ func GetRepository() Repository {
 		theRepo = &repository{db: db.GetDB()}
 	}
 	return theRepo
+}
+
+func (r *repository) Holen(id string) (tents []structs.Nutzer, err error) {
+	err = r.db.Raw("select * from nutzers where id not in (select uid_disliked from dislikes where uid_disliker in( select id from nutzers where uid = ?))", id).Scan(&tents).Error
+	return
 }
 
 func (r *repository) FindUsers() (nutzer []structs.Nutzer, err error) {

@@ -4,7 +4,6 @@ import TinderCard from 'react-tinder-card';
 import { collection, getDocs, setDoc, getDoc, doc, updateDoc, query, where } from 'firebase/firestore';
 import { database } from '../firebase';
 import { auth } from '../firebase';
-import { onAuthStateChanged } from "firebase/auth";
 import './Card.css';
 import Confetti from 'react-confetti'
 import useWindowSize from 'react-use/lib/useWindowSize'
@@ -14,114 +13,130 @@ import StarRateIcon from '@material-ui/icons/StarRate';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import FlashOnIcon from '@material-ui/icons/FlashOn';
 import IconButton from '@material-ui/core/IconButton';
-import firebase from 'firebase/app';
-import 'firebase/auth';
 
 import '../SwipeButtons.css';
-import { fetchUsers } from './fetchUsers';
-import { fetchDislikes } from './fetchChats';
 
 export default function Card() {
     const { uid } = useParams();
-    var [usersData, setusersData] = useState([]);
-    const [actual, setActual] = useState([]);
-
-    const [dislikeData, setDislikeData] = useState([]);
+    const [tents, setTents] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [lastDirection, setLastDirection] = useState();
     const [receiverInfo, setReceiverInfo] = useState('');
+    const [usersData, setusersData] = useState([]);
     const currentIndexRef = useRef(currentIndex);
     var [likes, setLikes] = useState([]);
     var [dislikes, setDislikes] = useState([uid]);
     var [otherLikes, setOtherLikes] = useState({ disliked: [], likedMe: [], myLikes: [] })
     const { width, height } = useWindowSize()
     const navigate = useNavigate();
-    const [showConfetti, setShowConfetti] = useState(false);
-    var [cards, setCards] = useState([])
-    var [userID, setUserID] = useState();
 
-
-
-    function findMatchingId(userID, usersData) {
-        const matchingUser = usersData.find(user => user.uid === userID);
-        return matchingUser ? matchingUser.id : null;
-    }
-
-    async function getUser() {
-        console.log("1: " + userID)
-        await fetchUsers((data, error) => {
-            if (data) {
-                // Save the fetched users in the usersData state
-                setusersData(data);
-                //console.log(usersData);
-            } else {
-                console.error(error);
-            }
-        });
-    }
-
-    useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
-            if (user.uid) {
-                const uid = user.uid;
-                setUserID(uid);
-                getUser();
-                handleDl();
-            } else {
-            }
-        });
-
-    }, [userID]);
-
-
-
-    async function handleDl() {
-        console.log(userID);
-        var id = findMatchingId(userID, usersData);
-        const deleteUserEndpoint = `http://localhost:6969/api/v1/dislike`;
-
-        await fetch(deleteUserEndpoint, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then(response => {
-                if (response.ok) {
-                    return response.json(); // Parse the response JSON
-                } else {
-                    console.error('Fehler beim Löschen des Benutzers:', response.status);
-                }
-            })
-            .then(data => {
-                // Assuming data is an array of objects
-                setDislikeData(data); // Set the dislike data with parsed JSON data
-                console.log(dislikeData)
-                let ca = [];
-                for (let index = 0; index < dislikeData.length; index++) {
-                    const id = dislikeData[index].UIDDisliked;
-                    console.log("dislike id: " + id)
-                    usersData.forEach(u => {
-                        if (u.id !== id && !ca.includes(u)) {
-                            ca.push(u);
-                        }
-                    });
-                }
-                setusersData(ca)
-            })
-            .catch(error => {
-                console.error('Fehler beim Löschen des Benutzers:', error);
-            });
-    }
-
-
+    var tns = []
+    //Test
     const childRefs = useMemo(
         () =>
-            Array(usersData.length)
+            Array(tents.length)
                 .fill(0)
                 .map((i) => React.createRef()),
-        [usersData.length]
+        [tents.length]
     );
+
+    const [showConfetti, setShowConfetti] = useState(false);
+
+
+    const getFieldFromSnapshot = (docSnapshot, fieldName) => {
+        const data = docSnapshot.data();
+        const fieldValue = data ? data[fieldName] : undefined;
+        return fieldValue;
+    };
+
+    useEffect(() => {
+        if (currentIndex >= 0 && currentIndex < tents.length) {
+            const currentTent = tents[currentIndex];
+            const tentUUID = currentTent.uuid;
+            setReceiverInfo(tentUUID);
+        }
+    }, [currentIndex, tents]);
+
+
+    useEffect(() => {
+        const fetchUsers = () => {
+            fetch("http://localhost:6969/api/va/holen/" + uid, {
+                method: 'GET',
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                })
+                .then((data) => {
+                    setusersData(data);
+                    console.log(data);
+                    console.log(usersData);
+                });
+        };
+        try {
+            fetchUsers();
+
+        } catch (error) {
+            console.error('Error updating user:', error);
+        }
+    }, []);
+
+    useEffect(() => {
+        console.log(usersData);
+    }, [usersData]);
+    /*
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const docRef = doc(database, 'likes', String(uid));
+                const docSnapshot = await getDoc(docRef);
+                if (docSnapshot.exists()) {
+                    const likeData = docSnapshot.data();
+                    getFieldFromSnapshot(docSnapshot, 'disliked').forEach(d => {
+                        dislikes.push(d)
+                    });
+                    setLikes(likeData);
+                } else {
+                    const collectionRef = collection(database, 'likes');
+                    await setDoc(doc(collectionRef, uid), { likedMe: [], myLikes: [], disliked: [] });
+                }
+            } catch (error) {
+                console.error('Error fetching tent document:', error);
+            }
+
+            const q = query(collection(database, 'tents'), where('uuid', 'not-in', dislikes));
+            const querySnapshot = await getDocs(q);
+            const tentData = querySnapshot.docs.map((doc) => doc.data());
+            setTents(tentData);
+            setCurrentIndex(tentData.length - 1);
+        };
+        console.log(uid)
+        fetchData();
+    }, []);
+*/
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const docRef = doc(database, 'likes', String(uid));
+                const docSnapshot = await getDoc(docRef);
+
+                if (docSnapshot.exists()) {
+                    const likeData = docSnapshot.data();
+                    setLikes(likeData);
+                } else {
+                    const collectionRef = collection(database, "likes");
+                    await setDoc(doc(collectionRef, uid), { likedMe: [], myLikes: [], disliked: [] });
+                }
+            } catch (error) {
+                console.error('Error fetching tent document:', error);
+            }
+        };
+
+        fetchData();
+
+    }, [uid]);
 
 
     const updateCurrentIndex = (val) => {
@@ -130,7 +145,7 @@ export default function Card() {
     }
 
 
-    const canGoBack = currentIndex < usersData.length - 1
+    const canGoBack = currentIndex < tents.length - 1
 
     const canSwipe = currentIndex >= 0
 
@@ -140,6 +155,36 @@ export default function Card() {
         updateCurrentIndex(index - 1)
     }
 
+    async function getLickyMaBally(uuid) {
+        const fetchData = async () => {
+            try {
+                const docRef = doc(database, 'likes', uuid);
+                const docSnapshot = await getDoc(docRef);
+
+                if (docSnapshot.exists()) {
+                    const likeData = docSnapshot.data();
+                    setOtherLikes(likeData);
+                    otherLikes = likeData
+                    otherLikes.likedMe.push(uid)
+                    await updateDoc(doc(collection(database, 'likes'), String(uuid)), otherLikes);
+                    if (likes.myLikes.includes(String(uuid)) && otherLikes.likedMe.includes(String(uid))) {
+                        setShowConfetti(true)
+                        setTimeout(() => {
+                            navigate(`/chats/${receiverInfo}`);
+                        }, 3000);
+                    }
+                } else {
+                    const collectionRef = collection(database, "likes");
+                    await setDoc(doc(collectionRef, uid), { likedMe: [], myLikes: [], disliked: [] });
+                }
+            } catch (error) {
+                console.error('Error fetching tent document:', error);
+            }
+        };
+
+        fetchData();
+
+    }
 
     const outOfFrame = (dir, name, idx, uuid) => {
         // handle the case in which go back is pressed before card goes outOfFrame
@@ -148,29 +193,20 @@ export default function Card() {
         // it happens multiple outOfFrame events are queued and the card disappear
         // during latest swipes. Only the last outOfFrame event should be considered valid
         if (dir === 'right') {
+            likes.myLikes.push(String(uuid))
+            updateDoc(doc(collection(database, 'likes'), uid), likes)
+            getLickyMaBally(uuid)
 
-            const response = fetch("http://217.160.215.31:6969/api/v1/likes", {
-                method: "POST",
-                headers: {
-                    "content-Type": "application/json"
-                },
-                body: JSON.stringify({ uidliker: findMatchingId(userID, usersData), uidliked: uuid })
-            });
         }
         if (dir === 'left') {
-            const response = fetch("http://217.160.215.31:6969/api/v1/dislike", {
-                method: "POST",
-                headers: {
-                    "content-Type": "application/json"
-                },
-                body: JSON.stringify({ uiddisliker: findMatchingId(userID, usersData), uiddisliked: uuid })
-            });
+            likes.disliked.push(String(uuid))
+            updateDoc(doc(collection(database, 'likes'), uid), likes)
         }
 
     }
 
     const swipe = async (dir) => {
-        if (canSwipe && currentIndex < usersData.length) {
+        if (canSwipe && currentIndex < tents.length) {
             await childRefs[currentIndex].current.swipe(dir) // Swipe the card!
         }
     }
@@ -195,7 +231,7 @@ export default function Card() {
                 height={height}
             />
             }
-            <div>{userID}</div>
+
             <div className='tinderCardsCOntainer'>
                 {usersData.map((user, index) => (
                     <TinderCard
