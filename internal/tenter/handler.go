@@ -4,24 +4,28 @@ import (
 	"ipr/structs"
 	"ipr/util"
 	"net/http"
+	"strconv"
 	"time"
 
 	log "github.com/sirupsen/logrus"
 )
 
 type DeleteUserHandler struct {
-	repository Repository
+	repository    Repository
+	requestParser util.RequestParser
 }
 
 func NewDeleteUserHandler() DeleteUserHandler {
-	return DeleteUserHandler{repository: GetRepository()}
+	return DeleteUserHandler{repository: GetRepository(), requestParser: util.NewRequestParser()}
 }
 
 func (h DeleteUserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	var user structs.Nutzer
-	userID := util.FromRequestBody(r, &user)
-	log.Errorf("id : %s", userID)
-	err := h.repository.DeleteUser(user.ID)
+	var id = h.requestParser.VarValue(r, "id")
+	userid, err := strconv.Atoi(id)
+	if err != nil {
+		return
+	}
+	err = h.repository.DeleteUser(userid)
 	if err != nil {
 		log.Errorf("cannot delete user: %v", err)
 		return

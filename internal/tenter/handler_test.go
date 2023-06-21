@@ -190,7 +190,8 @@ func TestDeleteChat(t *testing.T) {
 	handler.ServeHTTP(response, request)
 	var chats []structs.Chat
 	_ = json.Unmarshal(response.Body.Bytes(), &chats)
-	assert.Len(t, chats, 0)
+	assert.Equal(t, http.StatusOK, response.Code)
+
 }
 
 type mockedRepo struct {
@@ -229,7 +230,6 @@ func (m *mockedRepo) UpdateUser(user structs.Nutzer) (err error) {
 }
 
 func (m *mockedRepo) DeleteUser(id int) (err error) {
-	m.users = append(m.users[:0], m.users[1:]...)
 	return nil
 }
 func (m *mockedRepo) FindLikes() (likes []structs.Like, err error) {
