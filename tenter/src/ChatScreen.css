@@ -43,6 +43,7 @@
 .chatScreen__inputButton {
     border: none;
     margin-right: 20px;
+    padding: 10px;
     background-color: white;
     font-weight: bolder;
     color: #fe3d71;

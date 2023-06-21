@@ -1,47 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import Avatar from '@material-ui/core/Avatar';
-import "./ChatScreen.css";
-import { database, auth } from './firebase';
-import { collection, addDoc, serverTimestamp, doc, getDoc, query, where, getDocs, onSnapshot } from "firebase/firestore";
+import { auth } from './firebase';
 import { onAuthStateChanged } from "firebase/auth";
 import { useParams } from 'react-router-dom';
 import { fetchChats } from './card/fetchChats';
 import { fetchUsers } from './card/fetchUsers';
-
+import "./ChatScreen.css";
 
 
 
 function ChatScreen() {
     const { receiverInfo } = useParams();
     const [input, setInput] = useState('');
-    // const [messages, setMessages] = useState([]);
     const [userID, setUserID] = useState(null);
-
-
     const [usersData, setusersData] = useState([]);
-
     const [chatsData, setchatsData] = useState([]);
-    //const uidOfCurrentUser = auth.currentUser.uid;
-    console.log("Input" + input);
-    // console.log("Message: ", messages)
 
     useEffect(() => {
         fetchUsers((data, error) => {
             if (data) {
-                // Save the fetched users in the usersData state
-                //console.log("DATA Result USER: ", data);
                 setusersData(data);
-                //console.log(usersData);
             } else {
                 console.error(error);
             }
         });
         fetchChats((data, error) => {
             if (data) {
-                // Save the fetched users in the usersData state
-                console.log("DATA Result: ", data);
                 setchatsData(data);
-                //console.log(usersData);
             } else {
                 console.error(error);
             }
@@ -98,19 +83,18 @@ function ChatScreen() {
             console.log("TESTTST: ", chatsData);
             console.log("NEWWW", newMessage);
         }
-
-        //setchatsData([...chatsData, newMessage]);
         setInput("");
     };
 
     const date = new Date().toDateString()
-    console.log("MESSSAGESS: ", chatsData);
-
+    const receiverUser = usersData.find(user => user.id === matchingReceiverId);
+    const receiverName = receiverUser ? `${receiverUser.firstname} ${receiverUser.lastname}` : "";
+    //<p className="chatScreen__timestamp">YOU MATCHED WITH ELLEN ON {date}</p>
 
 
     return (
         <div className="chatScreen">
-            <p className="chatScreen__timestamp">YOU MATCHED WITH ELLEN ON {date}</p>
+            <p className="chatScreen__timestamp">YOU MATCHED WITH {receiverName} ON {date}</p>
             {chatsData.map((message, index) => (
 
                 (message.uidsender === matchingUserId && message.uidreceiver === matchingReceiverId) ? (
