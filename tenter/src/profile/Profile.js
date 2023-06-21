@@ -8,6 +8,7 @@ import { Button, Modal, Form, Input, Upload } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { fetchUsers } from '../card/fetchUsers';
+import { onAuthStateChanged } from "firebase/auth";
 
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -22,19 +23,21 @@ export default function Profile() {
     const navigate = useNavigate();
 
     const { uid } = useParams();
-    const [tent, setTent] = useState([]);
 
     const [openDelete, setOpenDelete] = useState(false);
     const [openUpdate, setOpenUpdate] = useState(false);
 
-    var [firstname, setFirstname] = useState('');
-    var [lastname, setLastname] = useState('');
+    var [new_firstname, setFirstname] = useState('');
+    var [new_lastname, setLastname] = useState('');
+    var [new_agePref, setAgePref] = useState('');
+    var [new_age, setAge] = useState('');
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
     const [fileList, setFileList] = useState([]);
     const [form] = Form.useForm();
     const [usersData, setusersData] = useState([]);
+    const [userID, setUserID] = useState(null);
 
 
     useEffect(() => {
@@ -48,9 +51,20 @@ export default function Profile() {
                 console.error(error);
             }
         });
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const uid = user.uid;
+                setUserID(uid);
+            } else {
+            }
+        });
+
+        return () => {
+            unsubscribe();
+        }
     }, []);
 
-    /*
+
     const showModal = () => {
         setOpenDelete(true);
     };
@@ -123,27 +137,18 @@ export default function Profile() {
     );
 
 
-
-
-
-
-    async function deleteDocument(collectionRef, documentId) {
-        try {
-            await deleteDoc(doc(collectionRef, documentId));
-            console.log("Document deleted successfully.");
-        } catch (error) {
-            console.error("Error deleting document:", error);
-            throw error;
-        }
+    function findMatchingId(userID, usersData) {
+        const matchingUser = usersData.find(user => user.uid === userID);
+        return matchingUser ? matchingUser.id : null;
     }
-    const onFinish = (values) => {
-        console.log(values);
-    };
+    const matchingUserId = findMatchingId(userID, usersData);
 
 
 
     function handleDelete() {
         const user = auth.currentUser;
+
+
         if (user) {
             user.delete()
                 .then(() => {
@@ -155,70 +160,68 @@ export default function Profile() {
             navigate("/login");
         }
 
-        const tentRef = collection(database, "tents");
-        const userRef = collection(database, "user");
+        const deleteUserEndpoint = `http://localhost:6969/api/v1/user/${matchingUserId}`; // Ersetze die URL mit der URL deines DELETE-Endpunkts
 
-        deleteDocument(tentRef, user.uid)
-            .then(() => {
-                console.log('Tent deleted successfully.');
+        fetch(deleteUserEndpoint, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                // Weitere Header falls erforderlich
+            },
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Benutzer erfolgreich gelöscht.');
+                    // Weitere Aktionen nach erfolgreicher Löschung
+                } else {
+                    console.error('Fehler beim Löschen des Benutzers:', response.status);
+                    // Fehlerbehandlung bei fehlgeschlagener Löschung
+                }
             })
-            .catch((error) => {
-                console.error('Error deleting tent:', error);
-            });
-
-        deleteDocument(userRef, user.uid)
-            .then(() => {
-                console.log('User deleted successfully.');
-            })
-            .catch((error) => {
-                console.error('Error deleting user:', error);
+            .catch(error => {
+                console.error('Fehler beim Löschen des Benutzers:', error);
+                // Fehlerbehandlung bei Netzwerkfehler oder anderen Ausnahmen
             });
 
         setOpenDelete(false);
     }
 
-    async function updateDocument(collectionRef, documentId, updatedData) {
-        try {
-            await updateDoc(doc(collectionRef, documentId), updatedData);
-            console.log("Document updated successfully.");
-        } catch (error) {
-            console.error("Error updating document:", error);
-            throw error;
-        }
-    }
 
     async function handleUpdate() {
-        const user = auth.currentUser;
-        var names = []
-        if (tent.name) {
-            names = tent.name.split(' ');
-        }
-        var picture = {
-            name: (firstname !== "" ? firstname : names[0]) + " " + (lastname !== "" ? lastname : names[1])
-        }
-        if (fileList.length > 0) {
-            await fileToString(fileList[0].originFileObj)
-                .then((fileContent) => {
-                    console.log('File content:', fileContent);
-                    picture.url = fileContent;
-                    // Perform further processing with the file content
-                })
-                .catch((error) => {
-                    console.error('Error converting file to string:', error);
-                });
-        }
-        var doc = await updateDocument(collection(database, 'tents'), user.uid, picture)
 
-        // Call the function to add the document to the collection
+        try {
 
-        const data = {
-            firstname: firstname != "" ? firstname : names[0],
-            lastname: lastname,
-        };
-        updateDocument(collection(database, 'user'), user.uid, data);
-        setOpenUpdate(false);
-        window.location.reload()
+            const userData = {
+                id: matchingUserId,
+                uid: userID,
+                firstname: new_firstname,
+                lastname: new_lastname,
+                agePref: new_agePref,
+                picture: "",
+                age: new_age
+            };
+
+            const userUpdateResponse = await fetch(`http://localhost:6969/api/v1/user/${matchingUserId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+            });
+
+            if (userUpdateResponse.ok) {
+                console.log('User updated successfully.');
+            } else {
+                console.error('Error updating user:', userUpdateResponse.status);
+            }
+
+            setOpenUpdate(false);
+            window.location.reload();
+        } catch (error) {
+            console.error('Error updating user:', error);
+        }
     }
+
 
     function fileToString(file) {
         return new Promise((resolve, reject) => {
@@ -247,25 +250,18 @@ export default function Profile() {
             case 'lastname':
                 setLastname(value);
                 break;
+            case 'agePref':
+                setAgePref(parseInt(value));
+                break;
+            case 'age':
+                setAge(parseInt(value));
             default:
                 break;
         }
     };
 
-    */
+
     const user = usersData.find(user => user.uid === uid);
-    if (user) {
-        // Hier kannst du auf die Eigenschaften des userProfil-Objekts zugreifen
-        console.log(user.picture);
-        // ...
-    } else {
-        // Benutzerprofil nicht gefunden
-        console.log("Benutzerprofil nicht gefunden");
-    }
-
-
-    console.log("USERDARA:", usersData);
-    console.log("Current User Profil", user);
 
     return (
         <div className="profile">
@@ -277,18 +273,56 @@ export default function Profile() {
                 </div>
                 <div className="formButton">
                     <div>
-                        <Button icon={<EditOutlined />} type="primary" size="large">
+                        <Button onClick={showUpdate} icon={<EditOutlined />} type="primary" size="large">
                             Edit
                         </Button>
                     </div>
                     <div>
-                        <Button icon={<DeleteOutlined />} type="primary" size="large">
+                        <Button onClick={showModal} icon={<DeleteOutlined />} type="primary" size="large">
                             Delete
                         </Button>
                     </div>
 
                 </div>
             </div>
+            <Modal
+                title="Delete account?"
+                open={openDelete}
+                onOk={handleDelete}
+                onCancel={hideModal}
+                okText="yes"
+                cancelText="cancel"
+            >
+                <p>Are you sure you want to delete your account?</p>
+            </Modal>
+            <Modal
+                title="update account"
+                open={openUpdate}
+                onOk={handleUpdate}
+                onCancel={hideUpdate}
+                okText="save"
+                cancelText="cancel"
+            >
+
+                <Input type="text" name="firstname" value={new_firstname} onChange={handleInputChange} placeholder="Enter your name" />
+
+                <Input type="text" name="lastname" value={new_lastname} onChange={handleInputChange} placeholder="Enter your last name" />
+
+                <Input type="number" name="agePref" value={new_agePref} onChange={handleInputChange} placeholder="Enter your last name" />
+
+                <Input type="number" name="age" value={new_age} onChange={handleInputChange} placeholder="Enter your last name" />
+
+                <Upload alt="Upload"
+                    listType="picture-card"
+                    fileList={fileList}
+                    customRequest={handleUpload}
+                    onRemove={handleRemove}
+                    onChange={handleChange}
+                    key="file-upload-component" // Add a unique key to the Upload component
+                >
+                    {fileList.length >= 1 ? null : uploadButton}
+                </Upload>
+            </Modal>
 
         </div>
 
