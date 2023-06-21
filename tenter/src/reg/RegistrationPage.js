@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PlusOutlined } from '@ant-design/icons';
 import { Modal, Upload, Form, Input, DatePicker } from 'antd';
 import "./RegistrationPage.css";
@@ -8,6 +8,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate } from 'react-router-dom';
 import { Slider } from 'antd';
+import { fetchUsers } from "../card/fetchUsers";
 
 
 const getBase64 = (file) =>
@@ -38,7 +39,7 @@ export default function RegistrationPage() {
     const navigate = useNavigate();
 
     const [form] = Form.useForm();
-
+    const agePref = 18
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
     const [email, setEmail] = useState('');
@@ -143,42 +144,58 @@ export default function RegistrationPage() {
         return age;
     }
 
+    const [usersData, setusersData] = useState([]);
+
+
+    useEffect(() => {
+        fetchUsers((data, error) => {
+            if (data) {
+                // Save the fetched users in the usersData state
+                console.log("DATA Result: ", data);
+                setusersData(data);
+                //console.log(usersData);
+            } else {
+                console.error(error);
+            }
+        });
+    }, []);
+
 
     async function signUp(e, navigate) {
         e.preventDefault();
         createUserWithEmailAndPassword(auth, email, password)
             .then(async (userCredential) => {
-                var picture = {
-                    url: "",
-                    name: firstname + " " + lastname,
-                    uuid: userCredential.user.uid
-                }
+                const userData = await fetchUsers()
+                const uidOfCurrentUser = auth.currentUser.uid;
+                const matchingUser = usersData.find(user => user.uid === uidOfCurrentUser);
+                console.log("MATCHING USER: ", matchingUser);
+                const matchingUserId = matchingUser ? matchingUser.id : null;
+                const user = {
+                    id: matchingUserId,
+                    uid: uidOfCurrentUser,
+                    firstname: firstname,
+                    lastname: lastname,
+                    agePref: agePref,
+                    picture: "",
+                    age: calculateAge(age)
+                };
 
                 await fileToString(fileList[0].originFileObj)
                     .then((fileContent) => {
-                        picture.url = fileContent;
+                        user.picture = fileContent;
                         // Perform further processing with the file content
                     })
                     .catch((error) => {
                         console.error('Error converting file to string:', error);
                     });
 
-                var doc = await addDocumentToCollection(picture, "tents", userCredential.user.uid);
-
-                const data = {
-                    firstname: firstname,
-                    lastname: lastname,
-                    email: email,
-                    age: calculateAge(age),
-                    password: password,
-                    picture: 'tents/' + doc,
-                    uuid: userCredential.user.uid
-                };
-
-                // Call the function to add the document to the collection
-                addDocumentToCollection(data, "user", userCredential.user.uid);
-                addDocumentToCollection({ matches: [] }, "matches", userCredential.user.uid);
-
+                const response = await fetch("http://217.160.215.31:6969/api/v1/user", {
+                    method: "POST",
+                    headers: {
+                        "content-Type": "application/json"
+                    },
+                    body: JSON.stringify(user)
+                });
             })
             .catch((error) => {
                 console.log(error);
@@ -268,7 +285,7 @@ export default function RegistrationPage() {
                     <Input type="password" name="password" value={password} onChange={handleInputChange} placeholder="Enter your password" />
                 </Form.Item>
                 <label>Age preference</label>
-                <Slider defaultValue={30} />
+                <Slider defaultValue={30} value={agePref} />
 
                 <Upload
                     listType="picture-card"
