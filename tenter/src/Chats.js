@@ -3,6 +3,7 @@ import './Chats.css';
 import Chat from "./Chat";
 import { fetchUsers } from './card/fetchUsers';
 import { fetchChats } from './card/fetchChats';
+import { auth } from "./firebase";
 
 function Chats() {
 
@@ -10,6 +11,7 @@ function Chats() {
 
     const [chatsData, setchatsData] = useState([]);
 
+    const uidOfCurrentUser = auth.currentUser.uid
     useEffect(() => {
         fetchUsers((data, error) => {
             if (data) {
@@ -32,11 +34,16 @@ function Chats() {
             }
         });
     }, []);
+    console.log("UID CURRETN USER: " + uidOfCurrentUser);
+    const matchingUser = usersData.find(user => user.uid === uidOfCurrentUser);
+    console.log("MATCHING USER: " + matchingUser);
+    const matchingUserId = matchingUser ? matchingUser.id : null;
+    console.log("MATCHING ID: " + matchingUserId);
 
     const currentUserChats = chatsData.filter(chat => {
         const senderID = parseInt(chat.uidsender);
         const receiverID = parseInt(chat.uidreceiver);
-        const currentUserID = 7; // ID des aktuellen Benutzers
+        const currentUserID = matchingUserId; // ID des aktuellen Benutzers
 
         return senderID === currentUserID || receiverID === currentUserID;
     });
@@ -45,7 +52,7 @@ function Chats() {
     currentUserChats.forEach(chat => {
         const senderID = parseInt(chat.uidsender);
         const receiverID = parseInt(chat.uidreceiver);
-        const currentUserID = 7; // ID des aktuellen Benutzers
+        const currentUserID = matchingUserId; // ID des aktuellen Benutzers
 
         if (senderID !== currentUserID) {
             userIDs.add(senderID);

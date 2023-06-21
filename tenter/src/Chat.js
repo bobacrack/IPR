@@ -6,6 +6,7 @@ import "./Chat.css";
 
 function Chat({ name, receiverInfo, message, profilePic, timestamp }) {
 
+
     return (
         <Link role='link' to={`/chats/${receiverInfo}`}>
             <div className="chat">
