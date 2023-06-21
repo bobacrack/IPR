@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import { Button, Modal, Form, Input, Upload } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-
+import { fetchUsers } from '../card/fetchUsers';
 
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -34,7 +34,23 @@ export default function Profile() {
     const [previewTitle, setPreviewTitle] = useState('');
     const [fileList, setFileList] = useState([]);
     const [form] = Form.useForm();
+    const [usersData, setusersData] = useState([]);
 
+
+    useEffect(() => {
+        fetchUsers((data, error) => {
+            if (data) {
+                // Save the fetched users in the usersData state
+                console.log("DATA Result: ", data);
+                setusersData(data);
+                //console.log(usersData);
+            } else {
+                console.error(error);
+            }
+        });
+    }, []);
+
+    /*
     const showModal = () => {
         setOpenDelete(true);
     };
@@ -106,28 +122,7 @@ export default function Profile() {
         </div>
     );
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (uid) {
-                try {
-                    const docRef = doc(database, 'tents', String(uid));
-                    const docSnapshot = await getDoc(docRef);
 
-                    if (docSnapshot.exists) {
-                        const tentData = docSnapshot.data();
-                        setTent(tentData);
-                    } else {
-                        console.log(`No tent document found with uid: ${uid}`);
-                    }
-                } catch (error) {
-                    console.error('Error fetching tent document:', error);
-                }
-            }
-        };
-
-        fetchData();
-
-    }, [uid]);
 
 
 
@@ -257,29 +252,62 @@ export default function Profile() {
         }
     };
 
+    */
+    const user = usersData.find(user => user.uid === uid);
+    if (user) {
+        // Hier kannst du auf die Eigenschaften des userProfil-Objekts zugreifen
+        console.log(user.picture);
+        // ...
+    } else {
+        // Benutzerprofil nicht gefunden
+        console.log("Benutzerprofil nicht gefunden");
+    }
+
+
+    console.log("USERDARA:", usersData);
+    console.log("Current User Profil", user);
+
     return (
         <div className="profile">
             <div className="profileContainer">
-                {tent && <h2>{tent.name}   { }</h2>}
-                <div className="picture" style={{ backgroundImage: `url(${tent.url})` }}>
-                    {tent && <img src={tent.url} alt="Profile" />}
+                {user && <h2>{user.firstname + " " + user.lastname}   { }</h2>}
+                <div className="picture" >
+                    {user && <img src={user.picture} alt="Profile" />}
 
                 </div>
                 <div className="formButton">
                     <div>
-                        <Button onClick={showUpdate} icon={<EditOutlined />} type="primary" size="large">
+                        <Button icon={<EditOutlined />} type="primary" size="large">
                             Edit
                         </Button>
                     </div>
                     <div>
-                        <Button onClick={showModal} icon={<DeleteOutlined />} type="primary" size="large">
+                        <Button icon={<DeleteOutlined />} type="primary" size="large">
                             Delete
                         </Button>
                     </div>
 
                 </div>
             </div>
-            <Modal
+
+        </div>
+
+
+
+    );
+
+    /*
+
+
+          <Button onClick={showUpdate} icon={<EditOutlined />} type="primary" size="large">
+                            Edit
+                        </Button>
+
+                         <Button onClick={showModal} icon={<DeleteOutlined />} type="primary" size="large">
+                            Delete
+                        </Button>
+
+ <Modal
                 title="Delete account?"
                 open={openDelete}
                 onOk={handleDelete}
@@ -313,10 +341,6 @@ export default function Profile() {
                     {fileList.length >= 1 ? null : uploadButton}
                 </Upload>
             </Modal>
-        </div>
-
-
-
-    );
+    */
 }
 
