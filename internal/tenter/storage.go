@@ -26,6 +26,7 @@ type Repository interface {
 	NewChat(chat structs.Chat) (err error)
 	DeleteRequest(chat structs.Chat) (err error)
 	GetChats() (chats []structs.Chat, err error)
+	GetDislikes(id int) (dislikes []structs.Dislike, err error)
 }
 
 func GetRepository() Repository {
@@ -96,5 +97,10 @@ func (r *repository) DeleteRequest(chat structs.Chat) (err error) {
 
 func (r *repository) GetChats() (chats []structs.Chat, err error) {
 	err = r.db.Table("chat").Find(&chats).Error
+	return
+}
+
+func (r *repository) GetDislikes(id int) (dislikes []structs.Dislike, err error) {
+	err = r.db.Table("dislikes").Where("uid_disliker = ?", id).Find(&dislikes).Error
 	return
 }
