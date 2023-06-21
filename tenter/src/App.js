@@ -7,7 +7,7 @@ import Chats from './Chats';
 import ChatScreen from './ChatScreen';
 import SwipeButtons from './SwipeButtons';
 import RegistrationPage from './reg/RegistrationPage';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import LogIn from './login/Login';
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from './firebase';
@@ -36,6 +36,7 @@ function App() {
     < div className="App" >
       <Router>
         <Routes>
+          <Route path='/' element={<Navigate to="login" />} />
           <Route path="/chats/:receiverInfo" element={<div><Header backButton="/chats" /><ChatScreen /></div>} />
           <Route path="/chats" element={<div><Header backButton="ySW" /><Chats /></div>} />
           <Route path="/:uid" element={<div><Header /><Card /></div>} />
