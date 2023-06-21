@@ -4,7 +4,7 @@ import { database } from '../firebase';
 import { collection, doc, getDoc, deleteDoc, updateDoc } from "firebase/firestore";
 import { auth } from "../firebase";
 import { useParams } from "react-router-dom";
-import { Button, Modal, Form, Input, Upload } from 'antd';
+import { Button, Modal, Form, Input, Upload, DatePicker, Slider } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { fetchUsers } from '../card/fetchUsers';
@@ -29,7 +29,7 @@ export default function Profile() {
 
     var [new_firstname, setFirstname] = useState('');
     var [new_lastname, setLastname] = useState('');
-    var [new_agePref, setAgePref] = useState('');
+    var [new_agePref, setAgePref] = useState(30);
     var [new_age, setAge] = useState('');
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
@@ -64,6 +64,9 @@ export default function Profile() {
         }
     }, []);
 
+    const handleSliderChange = (value) => {
+        setAgePref(value);
+    };
 
     const showModal = () => {
         setOpenDelete(true);
@@ -198,7 +201,7 @@ export default function Profile() {
                 lastname: new_lastname,
                 agePref: new_agePref,
                 picture: "",
-                age: new_age
+                age: calculateAge(new_age)
             };
 
             await fileToString(fileList[0].originFileObj)
@@ -333,9 +336,16 @@ export default function Profile() {
 
                 <Input type="text" name="lastname" value={new_lastname} onChange={handleInputChange} placeholder="Enter your last name" />
 
-                <Input type="number" name="agePref" value={new_agePref} onChange={handleInputChange} placeholder="Enter your last name" />
 
-                <Input type="number" name="age" value={new_age} onChange={handleInputChange} placeholder="Enter your last name" />
+
+                <DatePicker value={new_age} onChange={(date) => setAge(date)} style={{ width: '100%' }} placeholder="Select your age" />
+
+                <label>Age preference</label>
+                <Slider
+                    defaultValue={30}
+                    value={new_agePref}
+                    onChange={handleSliderChange}
+                />
 
                 <Upload alt="Upload"
                     listType="picture-card"
