@@ -16,7 +16,7 @@ jobs:
       - name: SSH into the server
         uses: appleboy/ssh-action@master
         with:
-          host: your-server-ip
+          host: ${{ secrets.IP}}
           username: ${{ secrets.USER}}
           key: ${{ secrets.SSH }}
           passphrase: ${{ secrets.PASS }}
