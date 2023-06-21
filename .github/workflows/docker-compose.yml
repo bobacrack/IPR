@@ -1,0 +1,13 @@
+version: '3'
+services:
+  app1:
+    image: ghcr.io/bobacrack/frontend:latest
+    ports:
+     - 3000:3000
+    network_mode: host
+
+  app2:
+    image: ghcr.io/bobacrack/backend:latest
+    ports:
+    - 6969:6969
+    network_mode: host
