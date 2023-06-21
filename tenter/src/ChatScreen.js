@@ -79,7 +79,7 @@ function ChatScreen() {
         console.log("Message: " + newMessage);
         try {
             // POST-Anfrage an deine API-Endpunkt senden, um die Daten in der Datenbank zu speichern
-            const response = await fetch("http://localhost:6969/api/v1/chat", {
+            const response = await fetch("http://217.160.215.31:6969/api/v1/chat", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

@@ -1,5 +1,5 @@
 export const fetchChats = (onCompleteCallback) => {
-    const url = 'http://localhost:6969/api/v1/chat'; // Adjust the URL according to your API endpoint
+    const url = 'http://217.160.215.31:6969/api/v1/chat'; // Adjust the URL according to your API endpoint
 
     fetch(url)
         .then((response) => {
