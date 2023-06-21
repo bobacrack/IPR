@@ -56,10 +56,10 @@ func (r *repository) UpdateUser(user structs.Nutzer) (err error) {
 }
 
 func (r *repository) DeleteUser(id int) (err error) {
-	err = r.db.Table("likes").Where("uidliker = ?", id).Delete(id).Error
-	err = r.db.Table("likes").Where("uidliked = ?", id).Delete(id).Error
-	err = r.db.Table("chat").Where("uidsender = ?", id).Delete(id).Error
-	err = r.db.Table("chat").Where("uidreceiver = ?", id).Delete(id).Error
+	//err = r.db.Table("likes").Where("uidliker = ?", id).Delete(id).Error
+	//err = r.db.Table("likes").Where("uidliked = ?", id).Delete(id).Error
+	//err = r.db.Table("chat").Where("uidsender = ?", id).Delete(id).Error
+	//err = r.db.Table("chat").Where("uidreceiver = ?", id).Delete(id).Error
 	err = r.db.Table("nutzers").Where("id = ?", id).Delete(id).Error
 	return
 }
