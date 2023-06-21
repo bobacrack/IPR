@@ -186,6 +186,11 @@ export default function Card() {
 
     }
 
+    function findMatchingId(userID, usersData) {
+        const matchingUser = usersData.find(user => user.uid === userID);
+        return matchingUser ? matchingUser.id : null;
+    }
+
     const outOfFrame = (dir, name, idx, uuid) => {
         // handle the case in which go back is pressed before card goes outOfFrame
         currentIndexRef.current >= idx && childRefs[idx].current.restoreCard()
@@ -193,14 +198,23 @@ export default function Card() {
         // it happens multiple outOfFrame events are queued and the card disappear
         // during latest swipes. Only the last outOfFrame event should be considered valid
         if (dir === 'right') {
-            likes.myLikes.push(String(uuid))
-            updateDoc(doc(collection(database, 'likes'), uid), likes)
-            getLickyMaBally(uuid)
 
+            const response = fetch("http://localhost:6969/api/v1/likes", {
+                method: "POST",
+                headers: {
+                    "content-Type": "application/json"
+                },
+                body: JSON.stringify({ uidliker: findMatchingId(uid, usersData), uidliked: uuid })
+            });
         }
         if (dir === 'left') {
-            likes.disliked.push(String(uuid))
-            updateDoc(doc(collection(database, 'likes'), uid), likes)
+            const response = fetch("http://localhost:6969/api/v1/dislike", {
+                method: "POST",
+                headers: {
+                    "content-Type": "application/json"
+                },
+                body: JSON.stringify({ uiddisliker: findMatchingId(uid, usersData), uiddisliked: uuid })
+            });
         }
 
     }
