@@ -23,7 +23,7 @@ import { fetchDislikes } from './fetchChats';
 
 export default function Card() {
     const { uid } = useParams();
-    const [usersData, setusersData] = useState([]);
+    var [usersData, setusersData] = useState([]);
     const [actual, setActual] = useState([]);
 
     const [dislikeData, setDislikeData] = useState([]);
@@ -42,31 +42,13 @@ export default function Card() {
 
 
 
-    //Test
-    const childRefs = useMemo(
-        () =>
-            Array(usersData.length)
-                .fill(0)
-                .map((i) => React.createRef()),
-        [usersData.length]
-    );
-
-
-    /*    
-    const getFieldFromSnapshot = (docSnapshot, fieldName) => {
-        const data = docSnapshot.data();
-        const fieldValue = data ? data[fieldName] : undefined;
-        return fieldValue;
-    };
-    */
-
-
     function findMatchingId(userID, usersData) {
         const matchingUser = usersData.find(user => user.uid === userID);
         return matchingUser ? matchingUser.id : null;
     }
 
     async function getUser() {
+        console.log("1: " + userID)
         await fetchUsers((data, error) => {
             if (data) {
                 // Save the fetched users in the usersData state
@@ -79,63 +61,68 @@ export default function Card() {
     }
 
     useEffect(() => {
-        console.log(userID)
-        getUser()
-        var id = findMatchingId(userID, usersData)
-        const deleteUserEndpoint = `http://localhost:6969/api/v1/dislike/${id}`; // Ersetze die URL mit der URL deines DELETE-Endpunkts
+        onAuthStateChanged(auth, (user) => {
+            if (user.uid) {
+                const uid = user.uid;
+                setUserID(uid);
+                getUser();
+                handleDl();
+            } else {
+            }
+        });
 
-        fetch(deleteUserEndpoint, {
+    }, [userID]);
+
+
+
+    async function handleDl() {
+        console.log(userID);
+        var id = findMatchingId(userID, usersData);
+        const deleteUserEndpoint = `http://localhost:6969/api/v1/dislike`;
+
+        await fetch(deleteUserEndpoint, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                // Weitere Header falls erforderlich
             },
         })
             .then(response => {
                 if (response.ok) {
-                    setDislikeData(response)
+                    return response.json(); // Parse the response JSON
                 } else {
                     console.error('Fehler beim Löschen des Benutzers:', response.status);
                 }
             })
+            .then(data => {
+                // Assuming data is an array of objects
+                setDislikeData(data); // Set the dislike data with parsed JSON data
+                console.log(dislikeData)
+                let ca = [];
+                for (let index = 0; index < dislikeData.length; index++) {
+                    const id = dislikeData[index].UIDDisliked;
+                    console.log("dislike id: " + id)
+                    usersData.forEach(u => {
+                        if (u.id !== id && !ca.includes(u)) {
+                            ca.push(u);
+                        }
+                    });
+                }
+                setusersData(ca)
+            })
             .catch(error => {
                 console.error('Fehler beim Löschen des Benutzers:', error);
             });
+    }
 
-        let ca = []
-        console.log(usersData.length)
-        for (let index = 0; index < dislikeData.length; index++) {
-            const id = dislikeData[index].uiddisliked;
-            usersData.forEach(u => {
-                if (u.id !== id) {
-                    ca.push(u)
-                }
-            })
-        }
-        console.log(ca.length)
-        updateUsersData(ca)
 
-    }, [userID]);
+    const childRefs = useMemo(
+        () =>
+            Array(usersData.length)
+                .fill(0)
+                .map((i) => React.createRef()),
+        [usersData.length]
+    );
 
-    const updateUsersData = (ca) => {
-        setActual(ca);
-    };
-
-    useEffect(() => {
-        if (currentIndex >= 0 && currentIndex < usersData.length) {
-            const currentuser = usersData[currentIndex];
-            const userUUID = currentuser.uid;
-            setReceiverInfo(userUUID);
-        }
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const uid = user.uid;
-                setUserID(uid);
-                console.log(uid)
-            } else {
-            }
-        });
-    }, [currentIndex]);
 
     const updateCurrentIndex = (val) => {
         setCurrentIndex(val)
@@ -208,7 +195,7 @@ export default function Card() {
                 height={height}
             />
             }
-
+            <div>{userID}</div>
             <div className='tinderCardsCOntainer'>
                 {usersData.map((user, index) => (
                     <TinderCard

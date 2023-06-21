@@ -187,18 +187,15 @@ func (h DislikeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 type GetDislikeHandler struct {
-	repository    Repository
-	requestParser util.RequestParser
+	repository Repository
 }
 
 func NewGetDislikesHandler() GetDislikeHandler {
-	return GetDislikeHandler{repository: GetRepository(), requestParser: util.NewRequestParser()}
+	return GetDislikeHandler{repository: GetRepository()}
 }
 
 func (h GetDislikeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	var id = h.requestParser.VarValue(r, "id")
-	mid, err := strconv.Atoi(id)
-	dislikes, err := h.repository.GetDislikes(mid)
+	dislikes, err := h.repository.GetDislikes()
 
 	if err != nil {
 		log.Errorf("cant find user: %v", err.Error())
