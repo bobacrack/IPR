@@ -191,7 +191,7 @@ export default function Profile() {
 
         try {
 
-            const userData = {
+            const user = {
                 id: matchingUserId,
                 uid: userID,
                 firstname: new_firstname,
@@ -200,13 +200,13 @@ export default function Profile() {
                 picture: "",
                 age: new_age
             };
-
-            const userUpdateResponse = await fetch(`http://localhost:6969/api/v1/user/${matchingUserId}`, {
+            console.log("USER", user);
+            const userUpdateResponse = await fetch(`http://localhost:6969/api/v1/user/`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(userData),
+                body: JSON.stringify(user),
             });
 
             if (userUpdateResponse.ok) {
