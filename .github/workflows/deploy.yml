@@ -20,9 +20,7 @@ jobs:
           username: ${{ secrets.USER}}
           key: ${{ secrets.SSH }}
           passphrase: ${{ secrets.PASS }}
-
-      - name: Deploy with Docker Compose
-        run: |
+          run: |
           cd
           docker-compose pull
           docker-compose up -d
