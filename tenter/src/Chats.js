@@ -9,7 +9,6 @@ import { onAuthStateChanged } from "firebase/auth";
 function Chats() {
 
     const [usersData, setusersData] = useState([]);
-
     const [chatsData, setchatsData] = useState([]);
     const [userID, setUserID] = useState(null);
 
@@ -18,7 +17,6 @@ function Chats() {
         fetchUsers((data, error) => {
             if (data) {
                 // Save the fetched users in the usersData state
-                console.log("DATA Result USER: ", data);
                 setusersData(data);
                 //console.log(usersData);
             } else {
@@ -28,7 +26,6 @@ function Chats() {
         fetchChats((data, error) => {
             if (data) {
                 // Save the fetched users in the usersData state
-                console.log("DATA Result: ", data);
                 setchatsData(data);
                 //console.log(usersData);
             } else {
