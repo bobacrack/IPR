@@ -200,8 +200,18 @@ export default function Profile() {
                 picture: "",
                 age: new_age
             };
+
+            await fileToString(fileList[0].originFileObj)
+                .then((fileContent) => {
+                    user.picture = fileContent;
+                    // Perform further processing with the file content
+                })
+                .catch((error) => {
+                    console.error('Error converting file to string:', error);
+                });
+
             console.log("USER", user);
-            const userUpdateResponse = await fetch(`http://localhost:6969/api/v1/user/`, {
+            const userUpdateResponse = await fetch(`http://localhost:6969/api/v1/user`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -259,6 +269,21 @@ export default function Profile() {
                 break;
         }
     };
+    function calculateAge(dateOfBirth) {
+        const birthDate = new Date(dateOfBirth);
+        const currentDate = new Date();
+
+        let age = currentDate.getFullYear() - birthDate.getFullYear();
+
+        const monthDifference = currentDate.getMonth() - birthDate.getMonth();
+
+        if (monthDifference < 0 || (monthDifference === 0 && currentDate.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        return age;
+    }
+
 
 
     const user = usersData.find(user => user.uid === uid);
