@@ -1,6 +1,5 @@
 name: Deploy to Server
 
-
 on:
   push:
     branches:
@@ -17,12 +16,11 @@ jobs:
       - name: SSH into the server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.IP}}
-          username: ${{ secrets.USER}}
+          host: ${{ secrets.IP }}
+          username: ${{ secrets.USER }}
           key: ${{ secrets.SSH }}
           passphrase: ${{ secrets.PASS }}
 
       - name: Deploy with Docker Compose
         run: |
-          docker-compose pull
-          docker-compose up -d
+          ssh ${{ secrets.USER }}@${{ secrets.IP }} 'cd && docker-compose pull && docker-compose up -d'
