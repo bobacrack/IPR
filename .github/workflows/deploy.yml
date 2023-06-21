@@ -21,6 +21,6 @@ jobs:
           key: ${{ secrets.SSH }}
           passphrase: ${{ secrets.PASS }}
           script: |
-            cd /path/to/your/app
+            cd
             docker-compose pull
             docker-compose up -d
