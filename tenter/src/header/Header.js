@@ -9,10 +9,26 @@ import logo from './logo.png'
 import { auth } from '../firebase';
 import { signOut } from "firebase/auth";
 import { Button } from 'antd';
+import { onAuthStateChanged } from "firebase/auth";
 
 function Header({ backButton }) {
     const navigate = useNavigate();
+    const [userID, setUserID] = useState(null);
 
+    useEffect(() => {
+
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const uid = user.uid;
+                setUserID(uid);
+            } else {
+            }
+        });
+
+        return () => {
+            unsubscribe();
+        }
+    }, []);
     const handleLogout = async () => {
         await signOut(auth)
         navigate("/login");
@@ -20,12 +36,12 @@ function Header({ backButton }) {
 
     const handleProfileClick = () => {
         const uid = auth.currentUser.uid
-        navigate(`/profile/${uid}`);
+        navigate(`/profile/${userID}`);
     };
 
     const home = () => {
         const uid = auth.currentUser.uid
-        navigate(`/${uid}`);
+        navigate(`/${userID}`);
     }
 
 
