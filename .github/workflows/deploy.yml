@@ -21,6 +21,6 @@ jobs:
           key: ${{ secrets.SSH }}
           passphrase: ${{ secrets.PASS }}
           script: |
-            cd
+            cd /home/kuehler
             docker compose pull
             docker compose up -d
