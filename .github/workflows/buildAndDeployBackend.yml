@@ -32,4 +32,4 @@ jobs:
           context: ./internal
           file: ${{ env.DOCKERFILE_PATH }}
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          tags: docker.pkg.github.com/${{ github.repository }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
