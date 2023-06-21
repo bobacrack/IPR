@@ -186,6 +186,27 @@ func (h DislikeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	util.WriteJsonWithStatus(w, like, http.StatusOK)
 }
 
+type GetDislikeHandler struct {
+	repository    Repository
+	requestParser util.RequestParser
+}
+
+func NewGetDislikesHandler() GetDislikeHandler {
+	return GetDislikeHandler{repository: GetRepository(), requestParser: util.NewRequestParser()}
+}
+
+func (h GetDislikeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	var id = h.requestParser.VarValue(r, "id")
+	mid, err := strconv.Atoi(id)
+	dislikes, err := h.repository.GetDislikes(mid)
+
+	if err != nil {
+		log.Errorf("cant find user: %v", err.Error())
+		return
+	}
+	util.WriteJsonWithStatus(w, dislikes, http.StatusOK)
+}
+
 type GetChatHandler struct {
 	repository Repository
 }

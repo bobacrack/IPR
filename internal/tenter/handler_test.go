@@ -36,7 +36,7 @@ func TestDeleteUser(t *testing.T) {
 	repo.users = []structs.Nutzer{
 		{ID: 1, UID: "abc", Firstname: "a", Lastname: "b", Age: 12, Agepref: 12, Picture: "pic"},
 	}
-	handler := DeleteUserHandler{repository: &repo}
+	handler := DeleteUserHandler{repository: &repo, requestParser: util.NewRequestParser()}
 	response := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodDelete, "/api/v1/user", nil)
 	handler.ServeHTTP(response, request)
@@ -128,8 +128,7 @@ func TestDeleteLike(t *testing.T) {
 	response := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodDelete, "/api/v1/like", nil)
 	handler.ServeHTTP(response, request)
-	var likes []structs.Like
-	_ = json.Unmarshal(response.Body.Bytes(), &likes)
+
 	assert.Equal(t, http.StatusOK, response.Code)
 }
 
@@ -143,8 +142,7 @@ func TestNewDislike(t *testing.T) {
 	response := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodPost, "/api/v1/dislike", nil)
 	handler.ServeHTTP(response, request)
-	var likes []structs.Dislike
-	_ = json.Unmarshal(response.Body.Bytes(), &likes)
+
 	assert.Equal(t, http.StatusOK, response.Code)
 }
 
@@ -192,6 +190,21 @@ func TestDeleteChat(t *testing.T) {
 	_ = json.Unmarshal(response.Body.Bytes(), &chats)
 	assert.Equal(t, http.StatusOK, response.Code)
 
+}
+
+func TestGetDislikes(t *testing.T) {
+	repo := mockedRepo{}
+	repo.dislikes = []structs.Dislike{
+		{ID: 1, UIDDisliker: 1, UIDDisliked: 2},
+		{ID: 2, UIDDisliker: 1, UIDDisliked: 1},
+	}
+	handler := GetDislikeHandler{repository: &repo, requestParser: util.NewRequestParser()}
+	response := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodGet, "/api/v1/dislike", nil)
+	handler.ServeHTTP(response, request)
+	var dislikes []structs.Dislike
+	_ = json.Unmarshal(response.Body.Bytes(), &dislikes)
+	assert.Len(t, dislikes, 0)
 }
 
 type mockedRepo struct {
@@ -263,4 +276,15 @@ func (m *mockedRepo) DeleteRequest(chat structs.Chat) (err error) {
 
 func (m *mockedRepo) GetChats() (chats []structs.Chat, err error) {
 	return m.chats, nil
+}
+
+func (m *mockedRepo) GetDislikes(id int) (dislikes []structs.Dislike, err error) {
+	dlikes := []structs.Dislike{}
+	for _, v := range m.dislikes {
+		if v.UIDDisliker == id {
+			dlikes = append(dlikes, v)
+		}
+	}
+	m.dislikes = dislikes
+	return dislikes, nil
 }
