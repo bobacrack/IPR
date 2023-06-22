@@ -38,7 +38,7 @@ func GetRepository() Repository {
 }
 
 func (r *repository) Holen(id string) (tents []structs.Nutzer, err error) {
-	err = r.db.Raw("select * from nutzers where id not in (select uid_disliked from dislikes where uid_disliker in( select id from nutzers where uid = ?))", id).Scan(&tents).Error
+	err = r.db.Raw("SELECT * FROM nutzers WHERE id NOT IN (SELECT uid_disliked FROM dislikes WHERE uid_disliker IN (SELECT id FROM nutzers WHERE uid = ?)) AND id IN (SELECT id FROM nutzers WHERE age >= (SELECT agepref FROM nutzers WHERE uid = ?))", id, id).Scan(&tents).Error
 	return
 }
 

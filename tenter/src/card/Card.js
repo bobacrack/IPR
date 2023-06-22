@@ -220,7 +220,7 @@ export default function Card() {
                 <IconButton style={{ backgroundColor: !canSwipe && '#c3c4d3' }} onClick={() => swipe('right')} className="swipeButtons__right">
                     <FavoriteIcon fontSize="large" />
                 </IconButton>
-                <IconButton className="swipeButtons__lightning">
+                <IconButton className="swipeButtons__lightning" onClick={() => window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"}>
                     <FlashOnIcon fontSize="large" />
                 </IconButton>
             </div>
