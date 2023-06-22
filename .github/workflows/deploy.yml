@@ -1,6 +1,9 @@
 name: Deploy to Server
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+    branches:
+      - final
 
 
 jobs:
