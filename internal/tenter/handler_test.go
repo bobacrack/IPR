@@ -198,7 +198,7 @@ func TestGetDislikes(t *testing.T) {
 		{ID: 1, UIDDisliker: 1, UIDDisliked: 2},
 		{ID: 2, UIDDisliker: 1, UIDDisliked: 1},
 	}
-	handler := GetDislikeHandler{repository: &repo, requestParser: util.NewRequestParser()}
+	handler := GetDislikeHandler{repository: &repo}
 	response := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodGet, "/api/v1/dislike", nil)
 	handler.ServeHTTP(response, request)
@@ -278,13 +278,11 @@ func (m *mockedRepo) GetChats() (chats []structs.Chat, err error) {
 	return m.chats, nil
 }
 
-func (m *mockedRepo) GetDislikes(id int) (dislikes []structs.Dislike, err error) {
-	dlikes := []structs.Dislike{}
-	for _, v := range m.dislikes {
-		if v.UIDDisliker == id {
-			dlikes = append(dlikes, v)
-		}
-	}
-	m.dislikes = dislikes
+func (m *mockedRepo) GetDislikes() (dislikes []structs.Dislike, err error) {
 	return dislikes, nil
+}
+
+func (m *mockedRepo) Holen(id string) (user []structs.Nutzer, err error) {
+	m.users = append(m.users[:0], m.users[1:]...)
+	return m.users, nil
 }
