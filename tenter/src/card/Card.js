@@ -24,7 +24,7 @@ export default function Card() {
     const [receiverInfo, setReceiverInfo] = useState('');
     const [usersData, setusersData] = useState([]);
     const currentIndexRef = useRef(currentIndex);
-    var [likes, setLikes] = useState([]);
+    const [likes, setLikes] = useState([]);
     var [dislikes, setDislikes] = useState([uid]);
     var [otherLikes, setOtherLikes] = useState({ disliked: [], likedMe: [], myLikes: [] })
     const { width, height } = useWindowSize()
@@ -68,8 +68,23 @@ export default function Card() {
                     console.log(usersData);
                 });
         };
+        const fetchLikes = () => {
+            fetch("http://localhost:6969/api/v1/likes", {
+                method: 'GET',
+            }).then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+            })
+                .then((data) => {
+                    setLikes(data);
+                    console.log(data);
+                    console.log(usersData);
+                });
+        }
         try {
             fetchUsers();
+            fetchLikes();
 
         } catch (error) {
             console.error('Error updating user:', error);
@@ -78,29 +93,9 @@ export default function Card() {
 
     useEffect(() => {
         console.log(usersData);
-    }, [usersData]);
+        console.log(likes)
+    }, [usersData, likes]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const docRef = doc(database, 'likes', String(uid));
-                const docSnapshot = await getDoc(docRef);
-
-                if (docSnapshot.exists()) {
-                    const likeData = docSnapshot.data();
-                    setLikes(likeData);
-                } else {
-                    const collectionRef = collection(database, "likes");
-                    await setDoc(doc(collectionRef, uid), { likedMe: [], myLikes: [], disliked: [] });
-                }
-            } catch (error) {
-                console.error('Error fetching tent document:', error);
-            }
-        };
-
-        fetchData();
-
-    }, [uid]);
 
 
     const updateCurrentIndex = (val) => {
@@ -139,6 +134,20 @@ export default function Card() {
                 },
                 body: JSON.stringify({ uidliker: findMatchingId(uid, usersData), uidliked: uuid })
             });
+            for (let i = 0; i < likes.length; i++) {
+                const liker = likes[i].UIDLiker;
+
+                const liked = likes[i].UIDLiked;
+                console.log(liker + " " + liked)
+                console.log(findMatchingId(uid, usersData) + " " + uuid)
+                if (liker === uuid && liked === findMatchingId(uid, usersData)) {
+                    console.log("match")
+                    setShowConfetti(true)
+                    setTimeout(() => {
+                        navigate(`/chats/${receiverInfo}`);
+                    }, 3000);
+                }
+            }
         }
         if (dir === 'left') {
             const response = fetch("http://localhost:6969/api/v1/dislike", {
