@@ -77,7 +77,6 @@ function Chats() {
             userIDs.add(senderID);
         }
     });
-
     console.log(chatsData); // Check the original chatsData array
 
     const users = usersData.filter(user => userIDs.has(user.id));
