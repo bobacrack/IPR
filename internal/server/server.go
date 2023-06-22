@@ -49,7 +49,7 @@ func (s Server) Start() {
 	//chats
 	s.router.Handle("/api/v1/chat", tenter.NewGetChatHandler()).Methods(http.MethodGet)
 	s.router.Handle("/api/v1/chat", tenter.NewChatHandler()).Methods(http.MethodPost)
-	s.router.Handle("/api/v1/likes", tenter.NewDeleteChatHandler()).Methods(http.MethodDelete)
+	s.router.Handle("/api/v1/chat", tenter.NewDeleteChatHandler()).Methods(http.MethodDelete)
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", s.port),

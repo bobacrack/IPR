@@ -15,6 +15,17 @@ jest.mock('../firebase', () => ({
 }));
 
 jest.mock('firebase/auth', () => ({
+    ...jest.requireActual('firebase/auth'),
+    getAuth: jest.fn(() => ({
+        currentUser: {
+            uid: 'mockedUid',
+        },
+        onAuthStateChanged: jest.fn().mockImplementation((callback) => {
+            // Simulate the behavior of onAuthStateChanged
+            // You can customize this mock behavior as needed
+            callback({ uid: 'mockedUid' });
+        }),
+    })),
     signOut: jest.fn(() => Promise.resolve()),
 }));
 

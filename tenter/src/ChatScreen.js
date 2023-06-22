@@ -6,6 +6,8 @@ import { useParams } from 'react-router-dom';
 import { fetchChats } from './card/fetchChats';
 import { fetchUsers } from './card/fetchUsers';
 import "./ChatScreen.css";
+import FlashOnIcon from "@material-ui/icons/FlashOn";
+import IconButton from "@material-ui/core/IconButton";
 
 
 
@@ -68,7 +70,7 @@ function ChatScreen() {
         console.log("Message: " + newMessage);
         try {
             // POST-Anfrage an deine API-Endpunkt senden, um die Daten in der Datenbank zu speichern
-            const response = await fetch("http://localhost:6969/api/v1/chat", {
+            const response = await fetch("http://217.160.215.31:6969/api/v1/chat", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -89,6 +91,16 @@ function ChatScreen() {
         }
         setInput("");
     };
+
+    function deleteChat(message) {
+        const response = fetch("http://localhost:6969/api/v1/chat", {
+            method: "DELETE",
+            headers: {
+                "content-Type": "application/json"
+            },
+            body: JSON.stringify(message)
+        });
+    }
 
     const date = new Date().toDateString()
     const currentUserChats = chatsData.filter(chat => {
@@ -113,6 +125,10 @@ function ChatScreen() {
 
                     <div key={index} className="chatScreen__message">
                         <p className="chatScreen__textUser">{message.message}</p>
+                        <IconButton onClick={() => deleteChat(message)} data-testid="swipe-button-lightning" size='small'>
+                            <FlashOnIcon fontSize="small" />
+                        </IconButton>
+
                     </div>
                 ) : (message.uidsender !== matchingUserId && message.uidsender === matchingReceiverId) ? (
                     <div key={index} className="chatScreen__message">
