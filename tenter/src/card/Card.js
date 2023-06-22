@@ -34,28 +34,22 @@ export default function Card() {
     //Test
     const childRefs = useMemo(
         () =>
-            Array(tents.length)
+            Array(usersData.length)
                 .fill(0)
                 .map((i) => React.createRef()),
-        [tents.length]
+        [usersData.length]
     );
 
     const [showConfetti, setShowConfetti] = useState(false);
 
 
-    const getFieldFromSnapshot = (docSnapshot, fieldName) => {
-        const data = docSnapshot.data();
-        const fieldValue = data ? data[fieldName] : undefined;
-        return fieldValue;
-    };
-
     useEffect(() => {
-        if (currentIndex >= 0 && currentIndex < tents.length) {
-            const currentTent = tents[currentIndex];
-            const tentUUID = currentTent.uuid;
+        if (currentIndex >= 0 && currentIndex < usersData.length) {
+            const currentTent = usersData[currentIndex];
+            const tentUUID = currentTent.uid;
             setReceiverInfo(tentUUID);
         }
-    }, [currentIndex, tents]);
+    }, [currentIndex, usersData]);
 
 
     useEffect(() => {
@@ -85,36 +79,6 @@ export default function Card() {
     useEffect(() => {
         console.log(usersData);
     }, [usersData]);
-    /*
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const docRef = doc(database, 'likes', String(uid));
-                const docSnapshot = await getDoc(docRef);
-                if (docSnapshot.exists()) {
-                    const likeData = docSnapshot.data();
-                    getFieldFromSnapshot(docSnapshot, 'disliked').forEach(d => {
-                        dislikes.push(d)
-                    });
-                    setLikes(likeData);
-                } else {
-                    const collectionRef = collection(database, 'likes');
-                    await setDoc(doc(collectionRef, uid), { likedMe: [], myLikes: [], disliked: [] });
-                }
-            } catch (error) {
-                console.error('Error fetching tent document:', error);
-            }
-
-            const q = query(collection(database, 'tents'), where('uuid', 'not-in', dislikes));
-            const querySnapshot = await getDocs(q);
-            const tentData = querySnapshot.docs.map((doc) => doc.data());
-            setTents(tentData);
-            setCurrentIndex(tentData.length - 1);
-        };
-        console.log(uid)
-        fetchData();
-    }, []);
-*/
 
     useEffect(() => {
         const fetchData = async () => {
@@ -145,7 +109,7 @@ export default function Card() {
     }
 
 
-    const canGoBack = currentIndex < tents.length - 1
+    const canGoBack = currentIndex < usersData.length - 1
 
     const canSwipe = currentIndex >= 0
 
@@ -155,36 +119,6 @@ export default function Card() {
         updateCurrentIndex(index - 1)
     }
 
-    async function getLickyMaBally(uuid) {
-        const fetchData = async () => {
-            try {
-                const docRef = doc(database, 'likes', uuid);
-                const docSnapshot = await getDoc(docRef);
-
-                if (docSnapshot.exists()) {
-                    const likeData = docSnapshot.data();
-                    setOtherLikes(likeData);
-                    otherLikes = likeData
-                    otherLikes.likedMe.push(uid)
-                    await updateDoc(doc(collection(database, 'likes'), String(uuid)), otherLikes);
-                    if (likes.myLikes.includes(String(uuid)) && otherLikes.likedMe.includes(String(uid))) {
-                        setShowConfetti(true)
-                        setTimeout(() => {
-                            navigate(`/chats/${receiverInfo}`);
-                        }, 3000);
-                    }
-                } else {
-                    const collectionRef = collection(database, "likes");
-                    await setDoc(doc(collectionRef, uid), { likedMe: [], myLikes: [], disliked: [] });
-                }
-            } catch (error) {
-                console.error('Error fetching tent document:', error);
-            }
-        };
-
-        fetchData();
-
-    }
 
     function findMatchingId(userID, usersData) {
         const matchingUser = usersData.find(user => user.uid === userID);
@@ -198,7 +132,6 @@ export default function Card() {
         // it happens multiple outOfFrame events are queued and the card disappear
         // during latest swipes. Only the last outOfFrame event should be considered valid
         if (dir === 'right') {
-
             const response = fetch("http://localhost:6969/api/v1/likes", {
                 method: "POST",
                 headers: {
@@ -220,7 +153,7 @@ export default function Card() {
     }
 
     const swipe = async (dir) => {
-        if (canSwipe && currentIndex < tents.length) {
+        if (canSwipe && currentIndex < usersData.length) {
             await childRefs[currentIndex].current.swipe(dir) // Swipe the card!
         }
     }
@@ -238,6 +171,7 @@ export default function Card() {
 
     return (
         <div>
+            {currentIndex}
             {showConfetti && <Confetti
                 run={true}
                 tweenDuration={100}
