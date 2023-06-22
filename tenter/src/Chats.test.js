@@ -1,29 +1,58 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import Chats from './Chats';
+import { fetchUsers } from './card/fetchUsers';
+import { fetchChats } from './card/fetchChats';
+import { auth } from './firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+
+jest.mock('./card/fetchUsers');
+jest.mock('./card/fetchChats');
+jest.mock('./firebase');
+jest.mock('firebase/auth');
 
 describe('Chats', () => {
-    test('renders chat components for each user', () => {
+    test('renders chat components for each user', async () => {
         // Mock the users and chats data
         const usersData = [
-            { id: 1, firstname: 'John', lastname: 'Doe', picture: 'profile1.jpg' },
-            { id: 2, firstname: 'Jane', lastname: 'Smith', picture: 'profile2.jpg' },
+            { id: 1, firstname: 'John', lastname: 'Doe', picture: 'profile1.jpg', uid: 'uid1' },
+            { id: 2, firstname: 'Jane', lastname: 'Smith', picture: 'profile2.jpg', uid: 'uid2' },
         ];
 
         const chatsData = [
-            { uidsender: 1, uidreceiver: 2, message: 'Hello', timestamp: 1624440000 },
-            { uidsender: 2, uidreceiver: 1, message: 'Hi', timestamp: 1624441000 },
+            { uidsender: 'uid1', uidreceiver: 'uid2', message: 'Hello', timestamp: 1624440000 },
+            { uidsender: 'uid2', uidreceiver: 'uid1', message: 'Hi', timestamp: 1624441000 },
         ];
 
-        // Render the Chats component with the mocked data
-        render(<Chats usersData={usersData} chatsData={chatsData} data-testid={`chat`} />);
+        // Mock fetchUsers and fetchChats
+        fetchUsers.mockImplementation((callback) => {
+            callback(usersData, null);
+        });
 
-        // Verify that the chat components are rendered for each user
-        const chatComponents = screen.getAllByTestId('chat');
-        expect(chatComponents.length).toBe(2);
+        fetchChats.mockImplementation((callback) => {
+            callback(chatsData, null);
+        });
 
-        // Verify the content of the chat components
-        expect(chatComponents[0]).toHaveTextContent('John Doe');
-        expect(chatComponents[1]).toHaveTextContent('Jane Smith');
+        // Mock onAuthStateChanged
+        const user = {
+            uid: 'mockUserID',
+        };
+
+        onAuthStateChanged.mockImplementation((auth, callback) => {
+            callback(user);
+        });
+
+        // Render the Chats component
+        render(<Chats />);
+
+        // Wait for the chat components to be rendered
+        await waitFor(() => {
+            // Verify that the chat components are rendered for each user
+            const chatComponents = screen.getAllByTestId('chat');
+            expect(chatComponents.length).toBe(2);
+
+            // Verify the content of the chat components
+            expect(chatComponents[0]).toHaveTextContent('John Doe');
+            expect(chatComponents[1]).toHaveTextContent('Jane Smith');
+        });
     });
 });
