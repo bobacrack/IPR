@@ -45,6 +45,10 @@ function ChatScreen() {
         }
     }, []);
 
+    useEffect(() => {
+        console.log(chatsData);
+    }, [chatsData]);
+
     function findMatchingId(userID, usersData) {
         const matchingUser = usersData.find(user => user.uid === userID);
         return matchingUser ? matchingUser.id : null;
@@ -64,7 +68,7 @@ function ChatScreen() {
         console.log("Message: " + newMessage);
         try {
             // POST-Anfrage an deine API-Endpunkt senden, um die Daten in der Datenbank zu speichern
-            const response = await fetch("http://217.160.215.31:6969/api/v1/chat", {
+            const response = await fetch("http://localhost:6969/api/v1/chat", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -87,15 +91,23 @@ function ChatScreen() {
     };
 
     const date = new Date().toDateString()
+    const currentUserChats = chatsData.filter(chat => {
+        const senderID = parseInt(chat.uidsender);
+        const receiverID = parseInt(chat.uidreceiver);
+        const currentUserID = matchingUserId; // ID des aktuellen Benutzers
+
+        return senderID === currentUserID && receiverID === matchingReceiverId || senderID === matchingReceiverId && receiverID === currentUserID;
+    });
     const receiverUser = usersData.find(user => user.id === matchingReceiverId);
     const receiverName = receiverUser ? `${receiverUser.firstname} ${receiverUser.lastname}` : "";
     //<p className="chatScreen__timestamp">YOU MATCHED WITH ELLEN ON {date}</p>
 
+    console.log(currentUserChats)
 
     return (
         <div className="chatScreen">
             <p className="chatScreen__timestamp">YOU MATCHED WITH {receiverName} ON {date}</p>
-            {chatsData.map((message, index) => (
+            {currentUserChats.map((message, index) => (
 
                 (message.uidsender === matchingUserId && message.uidreceiver === matchingReceiverId) ? (
 

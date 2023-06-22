@@ -59,6 +59,8 @@ function Chats() {
         return senderID === currentUserID || receiverID === currentUserID;
     });
 
+    console.log(currentUserChats); // Check the filtered chat objects
+
     const userIDs = new Set();
     currentUserChats.forEach(chat => {
         const senderID = parseInt(chat.uidsender);
@@ -71,10 +73,15 @@ function Chats() {
         if (receiverID !== currentUserID) {
             userIDs.add(receiverID);
         }
+        if (senderID === currentUserID) {
+            userIDs.add(senderID);
+        }
     });
 
+    console.log(chatsData); // Check the original chatsData array
+
     const users = usersData.filter(user => userIDs.has(user.id));
-    console.log("CurrentUSER: ", currentUserChats);
+    console.log("CurrentUSER: ", users);
 
 
     return (
